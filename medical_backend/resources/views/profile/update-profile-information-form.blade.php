@@ -59,6 +59,27 @@
             <x-input-error for="name" class="mt-2" />
         </div>
 
+        <!-- Bio  Data-->
+        <div class="col-span-6 sm:col-span-4">
+            <x-label for="name" value="{{ __('Bio Data') }}" />
+            <textarea class="mt-1 block w-full border-gray-300 focus:border-indigo-300 focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" id="bio" wire:model.defer="state.bio_data" placeholder="Bio Data"></textarea>
+            <x-input-error for="name" class="mt-2" />
+        </div>
+
+        <!-- Experience -->
+        <div class="col-span-6 sm:col-span-4">
+            <x-label for="experience" value="{{ __('Experience') }}" />
+            <x-input id="experience" type="number" min="0" max="60" class="mt-1 block w-full" wire:model.defer="state.experience" autocomplete="experience" />
+            <x-input-error for="experience" class="mt-2" />
+        </div>
+
+        <!-- Category -->
+        <div class="col-span-6 sm:col-span-4">
+            <x-label for="category" value="{{ __('Category') }}" />
+            <x-input id="category" type="text" class="mt-1 block w-full" wire:model.defer="state.category" autocomplete="category" />
+            <x-input-error for="category" class="mt-2" />
+        </div>
+        
         <!-- Email -->
         <div class="col-span-6 sm:col-span-4">
             <x-label for="email" value="{{ __('Email') }}" />
