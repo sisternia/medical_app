@@ -4,8 +4,8 @@ Settings
   -  Nhập composer update
   -  Bỏ đuôi .example tại .env sau đó chỉnh sửa APP_URL=http://127.0.0.1:8000
   -  Nhập tiếp php artisan migrate
-      -  Theo đường dẫn medical-main\medical_backend\vendor\laravel\jetstream\src\Http\Livewire\UpdateProfileInformationForm.php
-      -  Thêm đoạn mã này vào để hiển thị dữ liệu Profile trong Laravel
+  -  Theo đường dẫn medical-main\medical_backend\vendor\laravel\jetstream\src\Http\Livewire\UpdateProfileInformationForm.php
+  -  Thêm đoạn mã này vào để hiển thị dữ liệu Profile trong Laravel
 
             public function mount()
               {
@@ -20,10 +20,10 @@ Settings
               $this->state['category'] = Doctor::where('doc_id',$user->id)->first()->category;
               }
 - Terminal 2:
-      - Nhập lần lượt:
-      - npm install
-      - npm run build
-      - npm dev run
+  - Nhập lần lượt:
+  - npm install
+  - npm run build
+  - npm dev run
 * Chạy medical_ui
-      - Window -> Edit environment variables for your account -> Nhấp vào Path -> New -> D:\APP\ToolAndroid\SDKAndroid\platform-tools (SDK cài ở ổ nào thì tìm ra để cài)
-      - Window - CMD - adb reverse tcp:8000 tcp:8000
+  - Window -> Edit environment variables for your account -> Nhấp vào Path -> New -> D:\APP\ToolAndroid\SDKAndroid\platform-tools (SDK cài ở ổ nào thì tìm ra để cài)
+  - Window - CMD - adb reverse tcp:8000 tcp:8000
