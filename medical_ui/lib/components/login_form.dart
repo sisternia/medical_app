@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:medical/components/button.dart';
+import 'package:medical/main.dart';
+import 'package:medical/models/auth_model.dart';
+import 'package:medical/providers/dio_provider.dart';
 import 'package:medical/utils/config.dart';
+import 'package:provider/provider.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -64,13 +68,23 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
           Config.spaceSmall,
-          Button(
-            width: double.infinity,
-            title: 'Sign In',
-            onPressed: () {
-              Navigator.of(context).pushNamed('main');
+          Consumer<AuthModel>(
+            builder: (context, auth, child) {
+              return Button(
+                width: double.infinity,
+                title: 'Sign In',
+                onPressed: () async {
+                  final token = await DioProvider()
+                      .getToken(_emailController.text, _passController.text);
+
+                  if (token) {
+                    auth.loginSuccess();
+                    MyApp.navigatorKey.currentState!.pushNamed('main');
+                  }
+                },
+                disable: false,
+              );
             },
-            disable: false,
           ),
         ],
       ),

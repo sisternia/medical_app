@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medical/components/appointment_card.dart';
 import 'package:medical/components/doctor_card.dart';
+import 'package:medical/providers/dio_provider.dart';
 import 'package:medical/utils/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Map<String, dynamic> user = {};
   List<dynamic> favList = [];
   List<Map<String, dynamic>> medCat = [
     {
@@ -40,6 +45,27 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
+  Future<void> getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    if (token.isNotEmpty && token != '') {
+      final response = await DioProvider().getUser(token);
+      if (response != null) {
+        setState(() {
+          user = json.decode(response);
+          print(user);
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,15 +80,15 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      'Columbina',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      user['name'],
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       child: CircleAvatar(
                         radius: 30,
                         backgroundImage:
