@@ -54,7 +54,6 @@ class _HomePageState extends State<HomePage> {
       if (response != null) {
         setState(() {
           user = json.decode(response);
-          print(user);
         });
       }
     }
