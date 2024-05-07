@@ -79,7 +79,60 @@
             <x-input id="category" type="text" class="mt-1 block w-full" wire:model.defer="state.category" autocomplete="category" />
             <x-input-error for="category" class="mt-2" />
         </div>
-        
+
+        <!-- Location -->
+        <div class="col-span-6 sm:col-span-4">
+            <x-label for="location" value="{{ __('Location') }}" />
+            <div class="mt-1 flex rounded-md shadow-sm">
+                <x-input id="location" type="text" class="flex-1 block w-full rounded-l-md border-gray-300" wire:model.defer="state.location" autocomplete="location" />
+                <span class="inline-flex items-center px-4 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                    <button type="button" onclick="document.getElementById('location').value = ''">{{ __('Reset') }}</button>
+                </span>
+            </div>
+            <x-input-error for="location" class="mt-2" />
+        </div>
+
+        <!-- Iframe -->
+        <div class="col-span-6 sm:col-span-4">
+            <div id='map' style='width: 100%; height: 300px;'></div>
+
+            <script>
+                mapboxgl.accessToken = 'pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ';
+                const map = new mapboxgl.Map({
+                    container: 'map', // container ID
+                    style: 'mapbox://styles/mapbox/streets-v12', // style URL
+                    center: [-74.5, 40], // starting position [lng, lat]
+                    zoom: 9, // starting zoom
+                });
+            </script>
+
+            <script>
+                map.on('load', function () {
+                    // Tạo sự kiện click cho bản đồ
+                    map.on('click', function (e) {
+                        // Xóa marker hiện tại (nếu có)
+                        if (typeof marker !== 'undefined') {
+                            marker.remove();
+                        }
+
+                        // Thêm marker mới vào vị trí người dùng nhấp
+                        marker = new mapboxgl.Marker()
+                            .setLngLat(e.lngLat)
+                            .addTo(map);
+
+                        // Sử dụng dịch vụ địa chỉ địa lý của Mapbox để lấy tên địa điểm từ tọa độ
+                        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${e.lngLat.lng},${e.lngLat.lat}.json?access_token=pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ`)
+                            .then(response => response.json())
+                            .then(data => {
+                                // Cập nhật giá trị của input text với tên địa điểm
+                                document.getElementById('location').value = data.features[0].place_name;
+                            });
+                    });
+                });
+            </script>
+        </div>
+
+        </script>
         <!-- Email -->
         <div class="col-span-6 sm:col-span-4">
             <x-label for="email" value="{{ __('Email') }}" />
