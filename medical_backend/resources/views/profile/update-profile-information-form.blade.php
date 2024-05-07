@@ -98,36 +98,52 @@
 
             <script>
                 mapboxgl.accessToken = 'pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ';
-                const map = new mapboxgl.Map({
-                    container: 'map', // container ID
-                    style: 'mapbox://styles/mapbox/streets-v12', // style URL
-                    center: [-74.5, 40], // starting position [lng, lat]
-                    zoom: 9, // starting zoom
-                });
-            </script>
+                let center = localStorage.getItem('mapCenter');
+                if (!center) {
+                    center = [-74.5, 40]; // default center
+                } else {
+                    center = JSON.parse(center);
+                }
 
-            <script>
+                const map = new mapboxgl.Map({
+                    container: 'map',
+                    style: 'mapbox://styles/mapbox/streets-v12',
+                    center: center,
+                    zoom: 9,
+                });
+
                 map.on('load', function () {
-                    // Tạo sự kiện click cho bản đồ
                     map.on('click', function (e) {
-                        // Xóa marker hiện tại (nếu có)
                         if (typeof marker !== 'undefined') {
                             marker.remove();
                         }
 
-                        // Thêm marker mới vào vị trí người dùng nhấp
                         marker = new mapboxgl.Marker()
                             .setLngLat(e.lngLat)
                             .addTo(map);
 
-                        // Sử dụng dịch vụ địa chỉ địa lý của Mapbox để lấy tên địa điểm từ tọa độ
-                        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${e.lngLat.lng},${e.lngLat.lat}.json?access_token=pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ`)
+                        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${e.lngLat.lng},${e.lngLat.lat}
+                            .json?access_token=pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ`)
                             .then(response => response.json())
                             .then(data => {
-                                // Cập nhật giá trị của input text với tên địa điểm
-                                document.getElementById('location').value = data.features[0].place_name;
+                                const locationInput = document.getElementById('location');
+                                locationInput.value = data.features[0].place_name;
+                                locationInput.dispatchEvent(new Event('input'));
+                                localStorage.setItem('mapCenter', JSON.stringify(e.lngLat));
                             });
                     });
+                    // Check if locationInput has a value
+                    const locationInput = document.getElementById('location');
+                    if (locationInput.value) {
+                        // Parse the value to get the longitude and latitude
+                        const location = JSON.parse(localStorage.getItem('mapCenter'));
+                        const lngLat = [location.lng, location.lat];
+
+                        // Create a new marker at the locationInput position
+                        new mapboxgl.Marker()
+                            .setLngLat(lngLat)
+                            .addTo(map);
+                    }
                 });
             </script>
         </div>
