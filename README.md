@@ -18,6 +18,7 @@ Settings
               $this->state['experience'] = Doctor::where('doc_id',$user->id)->first()->experience;
               $this->state['bio_data'] = Doctor::where('doc_id',$user->id)->first()->bio_data;
               $this->state['category'] = Doctor::where('doc_id',$user->id)->first()->category;
+              $this->state['location'] = Doctor::where('doc_id',$user->id)->first()->location;
               }
 - Terminal 2:
   - Nhập lần lượt:
