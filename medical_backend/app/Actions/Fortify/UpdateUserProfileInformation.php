@@ -42,6 +42,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'experience' => $input['experience'],
             'bio_data' => $input['bio_data'],
             'category' => $input['category'],
+            'location' => $input['location'],
         ]);
 
     }

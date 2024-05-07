@@ -15,6 +15,7 @@ class Doctor extends Model
         'patients',
         'experience',
         'bio_data',
+        'location',
         'status',
     ];
     public function user(){
