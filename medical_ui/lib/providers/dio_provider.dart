@@ -48,4 +48,21 @@ class DioProvider {
       return error;
     }
   }
+
+  Future<dynamic> bookAppointment(
+      String date, String day, String time, int doctor, String token) async {
+    try {
+      var response = await Dio().post('http://127.0.0.1:8000/api/book',
+          data: {'date': date, 'day': day, 'time': time, 'doctor_id': doctor},
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
+
+      if (response.statusCode == 200 && response.data != '') {
+        return response.statusCode;
+      } else {
+        return 'Error';
+      }
+    } catch (error) {
+      return error;
+    }
+  }
 }

@@ -63,7 +63,8 @@ class _DoctorDetailsState extends State<DoctorDetails> {
                 width: double.infinity,
                 title: 'Book Appointment',
                 onPressed: () {
-                  Navigator.of(context).pushNamed('booking_page');
+                  Navigator.of(context).pushNamed('booking_page',
+                      arguments: {"doctor_id": doctor['doc_id']});
                 },
                 disable: false,
               ),
