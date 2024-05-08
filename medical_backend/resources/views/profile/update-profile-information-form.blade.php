@@ -129,21 +129,8 @@
                                 const locationInput = document.getElementById('location');
                                 locationInput.value = data.features[0].place_name;
                                 locationInput.dispatchEvent(new Event('input'));
-                                localStorage.setItem('mapCenter', JSON.stringify(e.lngLat));
                             });
                     });
-                    // Check if locationInput has a value
-                    const locationInput = document.getElementById('location');
-                    if (locationInput.value) {
-                        // Parse the value to get the longitude and latitude
-                        const location = JSON.parse(localStorage.getItem('mapCenter'));
-                        const lngLat = [location.lng, location.lat];
-
-                        // Create a new marker at the locationInput position
-                        new mapboxgl.Marker()
-                            .setLngLat(lngLat)
-                            .addTo(map);
-                    }
                 });
             </script>
         </div>
