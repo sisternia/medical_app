@@ -7,6 +7,6 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login',[UsersController::class,'login']);
 Route::post('/register',[UsersController::class,'register']);
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function() {
+    Route::get('/user', [UsersController::class, 'index']);
+});

@@ -18,7 +18,26 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+        $user = array(); //this will return a set of user and doctor data
+        $user = Auth::user();
+        $doctor = User::where('type', 'doctor')->get();
+        $doctorData = Doctor::all();
+
+        foreach($doctorData as $data){
+            //sorting doctor name and doctor details
+            foreach($doctor as $info){
+                if($data['doc_id'] == $info['id']){
+                    $data['doctor_name'] = $info['name'];
+                    $data['doctor_profile'] = $info['profile_photo_url'];
+                    if(isset($appointment) && $appointment['doc_id'] == $info['id']){
+                        $data['appointments'] = $appointment;
+                    }
+                }
+            }
+        }
+
+        $user['doctor'] = $doctorData;
+        return $user; 
     }
 
     /**

@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:medical/utils/config.dart';
 
 class DoctorCard extends StatelessWidget {
-  const DoctorCard({super.key, required this.route});
+  const DoctorCard({
+    super.key,
+    required this.route,
+    required this.doctor,
+  });
 
   final String route;
+  final Map<String, dynamic> doctor;
 
   @override
   Widget build(BuildContext context) {
@@ -19,26 +24,30 @@ class DoctorCard extends StatelessWidget {
             children: [
               SizedBox(
                 width: Config.widthSize * 0.25,
-                child: Image.asset('assets/images/Trav.png', fit: BoxFit.fill),
+                child: Image.network(
+                  "http://127.0.0.1:8000${doctor['doctor_profile']}",
+                  fit: BoxFit.fill,
+                ),
               ),
-              const Flexible(
+              Flexible(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Dr Trav',
-                        style: TextStyle(
+                        "Dr ${doctor['doctor_name']}",
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        'Dental',
-                        style: TextStyle(
+                        '${doctor['category']}',
+                        style: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.normal),
                       ),
-                      Spacer(),
-                      Row(
+                      const Spacer(),
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Icon(
@@ -71,7 +80,7 @@ class DoctorCard extends StatelessWidget {
           ),
         ),
         onTap: () {
-          Navigator.of(context).pushNamed(route);
+          Navigator.of(context).pushNamed(route, arguments: doctor);
         },
       ),
     );
