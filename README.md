@@ -24,7 +24,7 @@ Settings
   - Nhập lần lượt:
   - npm install
   - npm run build
-  - npm dev run
+  - npm run dev
 * Chạy medical_ui
   - Window -> Edit environment variables for your account -> Nhấp vào Path -> New -> D:\APP\ToolAndroid\SDKAndroid\platform-tools (SDK cài ở ổ nào thì tìm ra để cài)
   - Window - CMD - adb reverse tcp:8000 tcp:8000
