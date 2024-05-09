@@ -105,7 +105,7 @@
                     center = JSON.parse(center);
                 }
 
-                const map = new mapboxgl.Map({
+                let map = new mapboxgl.Map({
                     container: 'map',
                     style: 'mapbox://styles/mapbox/streets-v12',
                     center: center,

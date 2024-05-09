@@ -19,14 +19,21 @@ class DoctorCard extends StatelessWidget {
       height: 150,
       child: GestureDetector(
         child: Card(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15.0),
+              bottomLeft: Radius.circular(15.0),
+            ),
+          ),
           elevation: 5,
           child: Row(
             children: [
               SizedBox(
                 width: Config.widthSize * 0.25,
-                child: Image.network(
-                  "http://127.0.0.1:8000${doctor['doctor_profile']}",
-                  fit: BoxFit.fill,
+                child: CircleAvatar(
+                  radius: Config.widthSize * 0.125,
+                  backgroundImage: NetworkImage(
+                      "http://127.0.0.1:8000${doctor['doctor_profile']}"),
                 ),
               ),
               Flexible(

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:medical/utils/config.dart';
 
 class AppointmentCard extends StatefulWidget {
-  const AppointmentCard({super.key});
+  const AppointmentCard({super.key, required this.doctor, required this.color});
 
+  final Map<String, dynamic> doctor;
+  final Color color;
   @override
   State<AppointmentCard> createState() => _AppointmentCardState();
 }
@@ -14,7 +16,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Config.primaryColor,
+        color: widget.color,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Material(
@@ -23,13 +25,14 @@ class _AppointmentCardState extends State<AppointmentCard> {
           padding: const EdgeInsets.all(15),
           child: Column(
             children: <Widget>[
-              const Row(
+              Row(
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundImage: AssetImage('assets/images/Trav.png'),
+                    backgroundImage: NetworkImage(
+                        "http://127.0.0.1:8000${widget.doctor['doctor_profile']}"),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Column(
@@ -37,22 +40,24 @@ class _AppointmentCardState extends State<AppointmentCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Trav',
-                        style: TextStyle(color: Colors.white),
+                        'Dr ${widget.doctor['doctor_name']}',
+                        style: const TextStyle(color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 2,
                       ),
                       Text(
-                        'Dental',
-                        style: TextStyle(color: Colors.black),
+                        widget.doctor['category'],
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
                 ],
               ),
               Config.spaceSmall,
-              const ScheduleCard(),
+              ScheduleCard(
+                appointment: widget.doctor['appointments'],
+              ),
               Config.spaceSmall,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,7 +110,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
 }
 
 class ScheduleCard extends StatelessWidget {
-  const ScheduleCard({super.key});
+  const ScheduleCard({super.key, required this.appointment});
+
+  final Map<String, dynamic> appointment;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -115,36 +122,36 @@ class ScheduleCard extends StatelessWidget {
       ),
       width: double.infinity,
       padding: const EdgeInsets.all(10),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Icon(
+          const Icon(
             Icons.calendar_today,
             color: Colors.white,
             size: 15,
           ),
-          SizedBox(
+          const SizedBox(
             width: 5,
           ),
           Text(
-            'Saturday - 27/04/2024',
-            style: TextStyle(color: Colors.white),
+            '${appointment['day']}, ${appointment['date']}',
+            style: const TextStyle(color: Colors.white),
           ),
-          SizedBox(
+          const SizedBox(
             width: 20,
           ),
-          Icon(
+          const Icon(
             Icons.access_alarm,
             color: Colors.white,
             size: 17,
           ),
-          SizedBox(
+          const SizedBox(
             width: 5,
           ),
           Flexible(
             child: Text(
-              '10:00 AM',
-              style: TextStyle(color: Colors.white),
+              appointment['time'],
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],

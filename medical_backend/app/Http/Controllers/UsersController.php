@@ -22,6 +22,9 @@ class UsersController extends Controller
         $user = Auth::user();
         $doctor = User::where('type', 'doctor')->get();
         $doctorData = Doctor::all();
+        $date = now()->format('n/j/Y');
+
+        $appointment = Appointments::where('status', 'upcoming')->where('date', $date)->first();
 
         foreach($doctorData as $data){
             //sorting doctor name and doctor details

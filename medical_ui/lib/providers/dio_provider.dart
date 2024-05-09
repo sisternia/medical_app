@@ -65,4 +65,19 @@ class DioProvider {
       return error;
     }
   }
+
+  Future<dynamic> getAppointments(String token) async {
+    try {
+      var response = await Dio().get('http://127.0.0.1:8000/api/appointments',
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
+
+      if (response.statusCode == 200 && response.data != '') {
+        return json.encode(response.data);
+      } else {
+        return 'Error';
+      }
+    } catch (error) {
+      return error;
+    }
+  }
 }
