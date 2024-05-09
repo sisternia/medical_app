@@ -2,7 +2,7 @@ Settings
 * Mở 2 Terminal của medical_backend
 - Terminal 1:
   -  Nhập composer update
-  -  Bỏ đuôi .example tại .env sau đó chỉnh sửa APP_URL=http://127.0.0.1:8000
+  -  Bỏ đuôi .example tại .env sau đó chỉnh sửa APP_URL=
   -  Nhập tiếp php artisan migrate
   -  Theo đường dẫn medical-main\medical_backend\vendor\laravel\jetstream\src\Http\Livewire\UpdateProfileInformationForm.php
   -  Thêm đoạn mã này vào để hiển thị dữ liệu Profile trong Laravel
@@ -24,7 +24,7 @@ Settings
   - Nhập lần lượt:
   - npm install
   - npm run build
-  - npm dev run
+  - npm run dev
 * Chạy medical_ui
   - Window -> Edit environment variables for your account -> Nhấp vào Path -> New -> D:\APP\ToolAndroid\SDKAndroid\platform-tools (SDK cài ở ổ nào thì tìm ra để cài)
   - Window - CMD - adb reverse tcp:8000 tcp:8000
