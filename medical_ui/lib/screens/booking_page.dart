@@ -93,9 +93,10 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                     alignment: Alignment.center,
                     child: const Text(
-                      'Weekend is not available, please select another date',
+                      'Weekend is not available \n Please select another date',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
                       ),
@@ -108,7 +109,12 @@ class _BookingPageState extends State<BookingPage> {
                       return InkWell(
                         splashColor: Colors.transparent,
                         onTap: () {
-                          if (!isPastDate(_focusDay)) {
+                          final now = DateTime.now();
+                          final selectedTime =
+                              DateTime(now.year, now.month, now.day, index + 9);
+                          if ((_focusDay.day == now.day &&
+                                  selectedTime.isAfter(now)) ||
+                              _focusDay.day != now.day) {
                             setState(() {
                               _currentIndex = index;
                               _timeSelected = true;
@@ -117,7 +123,7 @@ class _BookingPageState extends State<BookingPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Center(
-                                  child: Text('Past booking time'),
+                                  child: Text('Cannot select past time'),
                                 ),
                                 duration: Duration(seconds: 2),
                               ),

@@ -11,6 +11,9 @@ Route::post('/register',[UsersController::class,'register']);
 
 Route::middleware('auth:sanctum')->group(function() {
     Route::get('/user', [UsersController::class, 'index']);
+    Route::post('/fav', [UsersController::class, 'storeFavDoc']);
+    Route::post('/logout', [UsersController::class, 'logout']);
     Route::post('/book', [AppointmentsController::class, 'store']);
+    Route::post('/reviews', [DocsController::class, 'store']);
     Route::get('/appointments', [AppointmentsController::class, 'index']);
 });
