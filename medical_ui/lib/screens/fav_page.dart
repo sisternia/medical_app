@@ -34,10 +34,13 @@ class _FavPageState extends State<FavPage> {
               child: Consumer<AuthModel>(
                 builder: (context, auth, child) {
                   return ListView.builder(
-                    itemCount: 5,
+                    itemCount: auth.getFavDoc.length,
                     itemBuilder: (context, index) {
-                      return const DoctorCard(
-                          route: 'doctor_details', doctor: {});
+                      return DoctorCard(
+                        doctor: auth.getFavDoc[index],
+                        //show fav icon
+                        isFav: true,
+                      );
                     },
                   );
                 },

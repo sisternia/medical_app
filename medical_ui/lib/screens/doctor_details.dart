@@ -2,21 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medical/components/button.dart';
 import 'package:medical/components/custom_appbar.dart';
+import 'package:medical/models/auth_model.dart';
+import 'package:medical/providers/dio_provider.dart';
 import 'package:medical/utils/config.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorDetails extends StatefulWidget {
-  const DoctorDetails({super.key});
+  const DoctorDetails({super.key, required this.doctor, required this.isFav});
+
+  final Map<String, dynamic> doctor;
+  final bool isFav;
 
   @override
   State<DoctorDetails> createState() => _DoctorDetailsState();
 }
 
 class _DoctorDetailsState extends State<DoctorDetails> {
+  Map<String, dynamic> doctor = {};
   bool isFav1 = false;
   bool isFav2 = false;
+
+  @override
+  void initState() {
+    doctor = widget.doctor;
+    isFav1 = widget.isFav;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final doctor = ModalRoute.of(context)!.settings.arguments as Map;
+    //final doctor = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
@@ -24,10 +40,31 @@ class _DoctorDetailsState extends State<DoctorDetails> {
         icon: const FaIcon(Icons.arrow_back_ios),
         actions: [
           IconButton(
-            onPressed: () {
-              setState(() {
-                isFav1 = !isFav1;
-              });
+            onPressed: () async {
+              final list =
+                  Provider.of<AuthModel>(context, listen: false).getFav;
+
+              if (list.contains(doctor['doc_id'])) {
+                list.removeWhere((id) => id == doctor['doc_id']);
+              } else {
+                list.add(doctor['doc_id']);
+              }
+
+              Provider.of<AuthModel>(context, listen: false).setFavList(list);
+
+              final SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+              final token = prefs.getString('token') ?? '';
+
+              if (token.isNotEmpty && token != '') {
+                final response = await DioProvider().storeFavDoc(token, list);
+
+                if (response == 200) {
+                  setState(() {
+                    isFav1 = !isFav1;
+                  });
+                }
+              }
             },
             icon: FaIcon(
               isFav1 ? Icons.favorite_rounded : Icons.favorite_outline,

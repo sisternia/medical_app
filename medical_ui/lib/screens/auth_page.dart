@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:medical/components/login_form.dart';
-import 'package:medical/components/sign_up_form.dart';
+import 'package:medical/auth/login_form.dart';
+import 'package:medical/auth/sign_up_form.dart';
 import 'package:medical/components/social_button.dart';
 import 'package:medical/utils/text.dart';
 

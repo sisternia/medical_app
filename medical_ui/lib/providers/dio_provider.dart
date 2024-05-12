@@ -102,4 +102,22 @@ class DioProvider {
       return error;
     }
   }
+
+  Future<dynamic> storeFavDoc(String token, List<dynamic> favList) async {
+    try {
+      var response = await Dio().post('http://127.0.0.1:8000/api/fav',
+          data: {
+            'favList': favList,
+          },
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
+
+      if (response.statusCode == 200 && response.data != '') {
+        return response.statusCode;
+      } else {
+        return 'Error';
+      }
+    } catch (error) {
+      return error;
+    }
+  }
 }

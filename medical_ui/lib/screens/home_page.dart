@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medical/components/appointment_card.dart';
 import 'package:medical/components/doctor_card.dart';
-import 'package:medical/providers/dio_provider.dart';
+import 'package:medical/models/auth_model.dart';
 import 'package:medical/utils/config.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,33 +44,14 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
-  Future<void> getData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? '';
-
-    if (token.isNotEmpty && token != '') {
-      final response = await DioProvider().getUser(token);
-      if (response != null) {
-        setState(() {
-          user = json.decode(response);
-          for (var doctorData in user['doctor']) {
-            if (doctorData['appointments'] != null) {
-              doctor = doctorData;
-            }
-          }
-        });
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    getData();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
+    Config().init(context);
+    user = Provider.of<AuthModel>(context, listen: false).getUser;
+    doctor = Provider.of<AuthModel>(context, listen: false).getAppointment;
+    favList = Provider.of<AuthModel>(context, listen: false).getFav;
+    print('user data is: $user');
+    print('favo list is: $favList');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: user.isEmpty
@@ -196,8 +175,12 @@ class _HomePageState extends State<HomePage> {
                       Column(
                         children: List.generate(user['doctor'].length, (index) {
                           return DoctorCard(
-                            route: 'doctor_details',
+                            //route: 'doctor_details',
                             doctor: user['doctor'][index],
+                            isFav: favList
+                                    .contains(user['doctor'][index]['doc_id'])
+                                ? true
+                                : false,
                           );
                         }),
                       ),

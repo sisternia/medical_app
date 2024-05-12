@@ -97,7 +97,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         .getToken(_emailController.text, _passController.text);
 
                     if (token) {
-                      auth.loginSuccess();
+                      auth.loginSuccess({}, {});
                       MyApp.navigatorKey.currentState!.pushNamed('main');
                     }
                   } else {

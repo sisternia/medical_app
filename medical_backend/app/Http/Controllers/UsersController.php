@@ -26,6 +26,8 @@ class UsersController extends Controller
 
         $appointment = Appointments::where('status', 'upcoming')->where('date', $date)->first();
 
+        $details = $user->user_details;
+
         foreach($doctorData as $data){
             //sorting doctor name and doctor details
             foreach($doctor as $info){
@@ -40,7 +42,28 @@ class UsersController extends Controller
         }
 
         $user['doctor'] = $doctorData;
+        $user['details'] = $details;
+        
         return $user; 
+    }
+
+        /**
+     * Store a newly created resource in storage.
+     */
+    public function storeFavDoc(Request $request)
+    {
+
+        $saveFav = UserDetails::where('user_id',Auth::user()->id)->first();
+
+        $docList = json_encode($request->get('favList'));
+
+        //update fav list into database
+        $saveFav->fav = $docList;  //and remember update this as well
+        $saveFav->save();
+
+        return response()->json([
+            'success'=>'The Favorite List is updated',
+        ], 200);
     }
 
     /**
