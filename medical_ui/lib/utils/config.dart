@@ -48,5 +48,7 @@ class Config {
         color: Colors.red,
       ));
 
-  static const primaryColor = Colors.blueAccent;
+  static const primaryColor = Color.fromARGB(255, 100, 153, 243);
+  static const whiteColor = Colors.white;
+  static const blackColor = Colors.black;
 }

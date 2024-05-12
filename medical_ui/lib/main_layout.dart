@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medical/screens/appointment_page.dart';
+import 'package:medical/screens/fav_page.dart';
 import 'package:medical/screens/home_page.dart';
+import 'package:medical/screens/profile_page.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -26,9 +28,9 @@ class _MainLayoutState extends State<MainLayout> {
         }),
         children: const <Widget>[
           HomePage(),
-          // FavPage(),
+          FavPage(),
           AppointmentPage(),
-          // ProfilePage(),
+          ProfilePage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -48,18 +50,18 @@ class _MainLayoutState extends State<MainLayout> {
             icon: FaIcon(FontAwesomeIcons.houseChimneyMedical),
             label: 'Home',
           ),
-          // BottomNavigationBarItem(
-          //   icon: FaIcon(FontAwesomeIcons.solidHeart),
-          //   label: 'Favorite',
-          // ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.solidHeart),
+            label: 'Favorite',
+          ),
           BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.solidCalendarCheck),
             label: 'Appointments',
           ),
-          // BottomNavigationBarItem(
-          //   icon: FaIcon(FontAwesomeIcons.solidUser),
-          //   label: 'Profile',
-          // ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.solidUser),
+            label: 'Profile',
+          ),
         ],
       ),
     );
