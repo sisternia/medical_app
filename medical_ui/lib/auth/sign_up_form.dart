@@ -38,6 +38,12 @@ class _SignUpFormState extends State<SignUpForm> {
               prefixIcon: Icon(Icons.person_outlined),
               prefixIconColor: Config.primaryColor,
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your username';
+              }
+              return null;
+            },
           ),
           Config.spaceSmall,
           TextFormField(
@@ -51,6 +57,12 @@ class _SignUpFormState extends State<SignUpForm> {
               prefixIcon: Icon(Icons.email_outlined),
               prefixIconColor: Config.primaryColor,
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              }
+              return null;
+            },
           ),
           Config.spaceSmall,
           TextFormField(
@@ -59,26 +71,34 @@ class _SignUpFormState extends State<SignUpForm> {
             cursorColor: Config.primaryColor,
             obscureText: obsecurePass,
             decoration: InputDecoration(
-                hintText: 'Password',
-                labelText: 'Password',
-                alignLabelWithHint: true,
-                prefixIcon: const Icon(Icons.lock_outline),
-                prefixIconColor: Config.primaryColor,
-                suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obsecurePass = !obsecurePass;
-                      });
-                    },
-                    icon: obsecurePass
-                        ? const Icon(
-                            Icons.visibility_off_outlined,
-                            color: Colors.black38,
-                          )
-                        : const Icon(
-                            Icons.visibility_outlined,
-                            color: Config.primaryColor,
-                          ))),
+              hintText: 'Password',
+              labelText: 'Password',
+              alignLabelWithHint: true,
+              prefixIcon: const Icon(Icons.lock_outline),
+              prefixIconColor: Config.primaryColor,
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    obsecurePass = !obsecurePass;
+                  });
+                },
+                icon: obsecurePass
+                    ? const Icon(
+                        Icons.visibility_off_outlined,
+                        color: Colors.black38,
+                      )
+                    : const Icon(
+                        Icons.visibility_outlined,
+                        color: Config.primaryColor,
+                      ),
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              return null;
+            },
           ),
           Config.spaceSmall,
           Consumer<AuthModel>(
@@ -87,21 +107,23 @@ class _SignUpFormState extends State<SignUpForm> {
                 width: double.infinity,
                 title: 'Sign Up',
                 onPressed: () async {
-                  final userRegistration = await DioProvider().registerUser(
-                      _nameController.text,
-                      _emailController.text,
-                      _passController.text);
+                  if (_formKey.currentState!.validate()) {
+                    final userRegistration = await DioProvider().registerUser(
+                        _nameController.text,
+                        _emailController.text,
+                        _passController.text);
 
-                  if (userRegistration) {
-                    final token = await DioProvider()
-                        .getToken(_emailController.text, _passController.text);
+                    if (userRegistration) {
+                      final token = await DioProvider().getToken(
+                          _emailController.text, _passController.text);
 
-                    if (token) {
-                      auth.loginSuccess({}, {});
-                      MyApp.navigatorKey.currentState!.pushNamed('main');
+                      if (token) {
+                        auth.loginSuccess({}, {});
+                        MyApp.navigatorKey.currentState!.pushNamed('main');
+                      }
+                    } else {
+                      print('register not successful');
                     }
-                  } else {
-                    print('register not successful');
                   }
                 },
                 disable: false,

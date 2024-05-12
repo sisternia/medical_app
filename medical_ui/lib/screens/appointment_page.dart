@@ -39,6 +39,13 @@ class _AppointmentPageState extends State<AppointmentPage> {
   }
 
   @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<dynamic> filteredSchedules = schedules.where((var schedule) {
       switch (schedule['status']) {

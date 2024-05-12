@@ -39,6 +39,12 @@ class _LoginFormState extends State<LoginForm> {
               prefixIcon: Icon(Icons.email_outlined),
               prefixIconColor: Config.primaryColor,
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              }
+              return null;
+            },
           ),
           Config.spaceSmall,
           TextFormField(
@@ -69,6 +75,12 @@ class _LoginFormState extends State<LoginForm> {
                       ),
               ),
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              return null;
+            },
           ),
           Config.spaceSmall,
           Consumer<AuthModel>(
@@ -77,28 +89,31 @@ class _LoginFormState extends State<LoginForm> {
                 width: double.infinity,
                 title: 'Sign In',
                 onPressed: () async {
-                  final token = await DioProvider()
-                      .getToken(_emailController.text, _passController.text);
+                  if (_formKey.currentState!.validate()) {
+                    final token = await DioProvider()
+                        .getToken(_emailController.text, _passController.text);
 
-                  if (token) {
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    final tokenValue = prefs.getString('token') ?? '';
+                    if (token) {
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      final tokenValue = prefs.getString('token') ?? '';
 
-                    if (tokenValue.isNotEmpty && tokenValue != '') {
-                      final response = await DioProvider().getUser(tokenValue);
-                      if (response != null) {
-                        setState(() {
-                          Map<String, dynamic> appointment = {};
-                          final user = json.decode(response);
-                          for (var doctorData in user['doctor']) {
-                            if (doctorData['appointments'] != null) {
-                              appointment = doctorData;
+                      if (tokenValue.isNotEmpty && tokenValue != '') {
+                        final response =
+                            await DioProvider().getUser(tokenValue);
+                        if (response != null) {
+                          setState(() {
+                            Map<String, dynamic> appointment = {};
+                            final user = json.decode(response);
+                            for (var doctorData in user['doctor']) {
+                              if (doctorData['appointments'] != null) {
+                                appointment = doctorData;
+                              }
                             }
-                          }
-                          auth.loginSuccess(user, appointment);
-                          MyApp.navigatorKey.currentState!.pushNamed('main');
-                        });
+                            auth.loginSuccess(user, appointment);
+                            MyApp.navigatorKey.currentState!.pushNamed('main');
+                          });
+                        }
                       }
                     }
                   }
