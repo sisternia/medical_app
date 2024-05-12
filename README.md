@@ -7,6 +7,11 @@ Settings
   -  Theo đường dẫn medical-main\medical_backend\vendor\laravel\jetstream\src\Http\Livewire\UpdateProfileInformationForm.php
   -  Thêm đoạn mã này vào để hiển thị dữ liệu Profile trong Laravel
 
+            use App\Models\Doctor;
+            use Illuminate\Support\Facades\Auth;
+            use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
+            use Livewire\Component;
+            use Livewire\WithFileUploads;
             public function mount()
               {
               $user = Auth::user();
