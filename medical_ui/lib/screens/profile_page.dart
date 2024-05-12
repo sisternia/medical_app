@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:medical/main.dart';
 import 'package:medical/providers/dio_provider.dart';
 import 'package:medical/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -103,7 +104,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             const Divider(color: Colors.grey),
                             _buildTile(
                                 FontAwesomeIcons.infoCircle, 'Information'),
-                            _buildTile(FontAwesomeIcons.signOutAlt, 'Logout'),
+                            _buildTile(FontAwesomeIcons.signOutAlt, 'Logout',
+                                logout: true),
                           ],
                         ),
                       ),
@@ -115,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildTile(IconData icon, String title) {
+  Widget _buildTile(IconData icon, String title, {bool logout = false}) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Config.primaryColor,
@@ -129,9 +131,31 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: Config.whiteColor,
         child: Icon(Icons.arrow_forward, color: Config.primaryColor),
       ),
-      onTap: () {
-        // Xử lý sự kiện khi nhấp vào ListTile
-      },
+      onTap: logout
+          ? _logout
+          : () {
+              // Xử lý sự kiện khi nhấp vào ListTile
+            },
     );
+  }
+
+  Future<void> _logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    if (token.isNotEmpty && token != '') {
+      //logout here
+      final response = await DioProvider().logout(token);
+
+      if (response == 200) {
+        //if successfully delete access token
+        //then delete token saved at Shared Preference as well
+        await prefs.remove('token');
+        setState(() {
+          //redirect to login page
+          MyApp.navigatorKey.currentState!.pushReplacementNamed('/');
+        });
+      }
+    }
   }
 }

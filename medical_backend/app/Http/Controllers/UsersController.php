@@ -114,6 +114,18 @@ class UsersController extends Controller
     }
 
     /**
+    * Logout.
+    */
+    public function logout(){
+        $user = Auth::user();
+        $user->currentAccessToken()->delete();
+
+        return response()->json([
+            'success'=>'Logout successfully!',
+        ], 200);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
