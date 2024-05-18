@@ -32,7 +32,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
           color: Colors.black,
         ),
       ),
-      //if icon is not set, return null
       leading: widget.icon != null
           ? Container(
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -42,11 +41,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
               child: IconButton(
                 onPressed: () {
-                  //if route is given, then this icon button will navigate to that route
                   if (widget.route != null) {
                     Navigator.of(context).pushNamed(widget.route!);
                   } else {
-                    //else, just simply pop back to previous page
                     Navigator.of(context).pop();
                   }
                 },
@@ -56,7 +53,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             )
           : null,
-      //if action is not set, return null
       actions: widget.actions,
     );
   }

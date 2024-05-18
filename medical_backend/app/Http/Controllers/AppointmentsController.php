@@ -17,6 +17,7 @@ class AppointmentsController extends Controller
         //retrieve all appointments from the user
         $appointment = Appointments::where('user_id', Auth::user()->id)->get();
         $doctor = User::where('type', 'doctor')->get();
+        $user = User::where('type','user')->get();
 
         //sorting appointment and doctor details
         //and get all related appointment

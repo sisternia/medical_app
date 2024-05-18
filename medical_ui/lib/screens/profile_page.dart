@@ -1,10 +1,13 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:medical/main.dart';
+import 'package:medical/models/auth_model.dart';
 import 'package:medical/providers/dio_provider.dart';
 import 'package:medical/utils/config.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -17,29 +20,12 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic> user = {};
   Map<String, dynamic> doctor = {};
-
-  Future<void> getData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? '';
-
-    if (token.isNotEmpty && token != '') {
-      final response = await DioProvider().getUser(token);
-      if (response != null) {
-        setState(() {
-          user = json.decode(response);
-        });
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    getData();
-    super.initState();
-  }
+  final ImagePicker _picker = ImagePicker();
+  XFile? _imageFile;
 
   @override
   Widget build(BuildContext context) {
+    user = Provider.of<AuthModel>(context, listen: false).getUser;
     return Scaffold(
       backgroundColor: Colors.white,
       body: user.isEmpty
@@ -55,10 +41,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   children: <Widget>[
                     const SizedBox(height: 20),
-                    const CircleAvatar(
-                      radius: 60,
-                      backgroundImage: NetworkImage(
-                          'https://via.placeholder.com/150'), // Thay thế bằng đường dẫn đến ảnh của bạn
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundImage: _imageFile == null
+                            ? NetworkImage(
+                                "http://127.0.0.1:8000/storage/${user['profile_photo_path']}")
+                            : FileImage(File(_imageFile!.path))
+                                as ImageProvider,
+                        onBackgroundImageError: (_, __) {
+                          // Khi không thể tải hình ảnh từ server
+                          setState(() {
+                            _imageFile = null;
+                          });
+                        },
+                        child: _imageFile == null
+                            ? const Icon(
+                                Icons.person,
+                                size: 60,
+                                color: Colors.grey,
+                              )
+                            : null,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Text(
@@ -78,21 +83,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Config.primaryColor, // Thay đổi màu nền ở đây
-                          borderRadius: BorderRadius.circular(50)),
-                      child: TextButton.icon(
-                        onPressed: () {
-                          // Xử lý sự kiện khi nhấp vào nút
-                        },
-                        icon: const Icon(Icons.edit, color: Config.whiteColor),
-                        label: const Text(
-                          'Edit Profile',
-                          style: TextStyle(color: Config.whiteColor),
-                        ),
-                      ),
-                    ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(15),
@@ -115,6 +105,46 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
     );
+  }
+
+  Future<void> _pickImage() async {
+    final action = await showModalBottomSheet<ImageSource>(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.photo_camera),
+                  title: const Text('Take a Photo'),
+                  onTap: () {
+                    Navigator.pop(context, ImageSource.camera);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Select From Gallery'),
+                  onTap: () {
+                    Navigator.pop(context, ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+
+    if (action == null) {
+      return;
+    }
+
+    final XFile? selectedImage = await _picker.pickImage(
+      source: action,
+    );
+
+    setState(() {
+      _imageFile = selectedImage;
+    });
   }
 
   Widget _buildTile(IconData icon, String title, {bool logout = false}) {

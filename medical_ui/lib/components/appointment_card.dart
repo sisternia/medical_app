@@ -134,12 +134,10 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                 final rating = await DioProvider().storeReviews(
                                     response.comment,
                                     response.rating,
-                                    widget.doctor['appointments']
-                                        ['id'], //this is appointment id
-                                    widget.doctor['doc_id'], //this is doctor id
+                                    widget.doctor['appointments']['id'],
+                                    widget.doctor['doc_id'],
                                     token);
 
-                                //if successful, then refresh
                                 if (rating == 200 && rating != '') {
                                   MyApp.navigatorKey.currentState!
                                       .pushNamed('main');

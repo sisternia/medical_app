@@ -3,7 +3,6 @@ import 'package:medical/main_layout.dart';
 import 'package:medical/models/auth_model.dart';
 import 'package:medical/screens/auth_page.dart';
 import 'package:medical/screens/booking_page.dart';
-import 'package:medical/screens/doctor_details.dart';
 import 'package:medical/screens/success_booked.dart';
 import 'package:medical/utils/config.dart';
 import 'package:provider/provider.dart';

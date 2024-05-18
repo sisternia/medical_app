@@ -46,7 +46,7 @@ class UsersController extends Controller
         
         return $user; 
     }
-
+    
         /**
      * Store a newly created resource in storage.
      */
