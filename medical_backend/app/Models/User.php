@@ -67,6 +67,11 @@ class User extends Authenticatable
         return $this->hasMany(Reviews::class, 'user_id');
     }
 
+    public function maps()
+    {
+        return $this->hasMany(Map::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

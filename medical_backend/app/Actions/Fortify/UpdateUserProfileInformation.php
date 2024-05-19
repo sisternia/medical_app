@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\Doctor;
+use App\Models\Map;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -21,6 +22,12 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'experience' => ['nullable', 'integer'],
+            'bio_data' => ['nullable', 'string'],
+            'category' => ['nullable', 'string', 'max:255'],
+            'location' => ['nullable', 'string'],
+            'longitude' => ['nullable', 'numeric'],
+            'latitude' => ['nullable', 'numeric'],
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {
@@ -37,14 +44,23 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             ])->save();
         }
 
-        $doctor = Doctor::where('doc_id', $user->id)
-        ->update([
+        $doctor = Doctor::where('doc_id', $user->id)->first();
+        $doctor->update([
             'experience' => $input['experience'],
             'bio_data' => $input['bio_data'],
             'category' => $input['category'],
-            'location' => $input['location'],
         ]);
 
+        Map::updateOrCreate(
+            ['doctor_id' => $doctor->id],
+            [
+                'location' => $input['location'],
+                'longitude' => $input['longitude'],
+                'latitude' => $input['latitude'],
+                'user_id' => $user->id,
+                'user_detail_id' => $user->userDetail->id ?? null,
+            ]
+        );
     }
 
     /**

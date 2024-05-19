@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unsignedInteger('patients')->nullable();
             $table->unsignedInteger('experience')->nullable();
             $table->longText('bio_data')->nullable();
-            $table->longText('location')->nullable();
             $table->string('status')->nullable();
             $table->foreign('doc_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

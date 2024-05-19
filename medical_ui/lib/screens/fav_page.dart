@@ -38,13 +38,12 @@ class _FavPageState extends State<FavPage> {
                     itemBuilder: (context, index) {
                       return DoctorCard(
                         doctor: auth.getFavDoc[index],
-                        //show fav icon
                         isFav: true,
+                        isFavPage: true, // Thêm tham số này
                       );
                     },
                   );
                 },
-                //child:
               ),
             ),
           ],

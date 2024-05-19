@@ -92,27 +92,39 @@
             <x-input-error for="location" class="mt-2" />
         </div>
 
+        <!-- Hidden fields for longitude and latitude -->
+        <input type="hidden" id="longitude" name="longitude" wire:model.defer="state.longitude">
+        <input type="hidden" id="latitude" name="latitude" wire:model.defer="state.latitude">
+
         <!-- Iframe -->
         <div class="col-span-6 sm:col-span-4">
             <div id='map' style='width: 100%; height: 300px;'></div>
 
             <script>
                 mapboxgl.accessToken = 'pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ';
-                let center = localStorage.getItem('mapCenter');
-                if (!center) {
-                    center = [-74.5, 40]; // default center
-                } else {
-                    center = JSON.parse(center);
-                }
+
+                // Fetch initial center from database values or localStorage
+                let initialCenter = JSON.parse(localStorage.getItem('mapCenter')) || {
+                    lng: {{ $state['longitude'] ?? -74.5 }},
+                    lat: {{ $state['latitude'] ?? 40 }}
+                };
 
                 let map = new mapboxgl.Map({
                     container: 'map',
                     style: 'mapbox://styles/mapbox/streets-v12',
-                    center: center,
+                    center: initialCenter,
                     zoom: 9,
                 });
 
+                let marker;
+
                 map.on('load', function () {
+                    if (initialCenter.lng !== -74.5 && initialCenter.lat !== 40) {
+                        marker = new mapboxgl.Marker()
+                            .setLngLat(initialCenter)
+                            .addTo(map);
+                    }
+
                     map.on('click', function (e) {
                         if (typeof marker !== 'undefined') {
                             marker.remove();
@@ -122,31 +134,40 @@
                             .setLngLat(e.lngLat)
                             .addTo(map);
 
-                        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${e.lngLat.lng},${e.lngLat.lat}
-                            .json?access_token=pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ`)
+                        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${e.lngLat.lng},${e.lngLat.lat}.json?access_token=${mapboxgl.accessToken}`)
                             .then(response => response.json())
                             .then(data => {
                                 const locationInput = document.getElementById('location');
+                                const longitudeInput = document.getElementById('longitude');
+                                const latitudeInput = document.getElementById('latitude');
+                                
                                 locationInput.value = data.features[0].place_name;
+                                longitudeInput.value = e.lngLat.lng;
+                                latitudeInput.value = e.lngLat.lat;
+
                                 locationInput.dispatchEvent(new Event('input'));
+                                longitudeInput.dispatchEvent(new Event('input'));
+                                latitudeInput.dispatchEvent(new Event('input'));
+
                                 localStorage.setItem('mapCenter', JSON.stringify(e.lngLat));
                             });
                     });
+
                     // Check if locationInput has a value
                     const locationInput = document.getElementById('location');
                     if (locationInput.value) {
-                        // Parse the value to get the longitude and latitude
-                        const location = JSON.parse(localStorage.getItem('mapCenter'));
-                        const lngLat = [location.lng, location.lat];
+                        const lngLat = initialCenter;
 
                         // Create a new marker at the locationInput position
-                        new mapboxgl.Marker()
+                        marker = new mapboxgl.Marker()
                             .setLngLat(lngLat)
                             .addTo(map);
                     }
                 });
             </script>
         </div>
+
+
 
         </script>
         <!-- Email -->
