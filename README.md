@@ -13,18 +13,22 @@ Settings
             use Livewire\Component;
             use Livewire\WithFileUploads;
             public function mount()
-              {
-              $user = Auth::user();
-
-              $this->state = array_merge([
-                  'email' => $user->email,
-              ], $user->withoutRelations()->toArray());
-
-              $this->state['experience'] = Doctor::where('doc_id',$user->id)->first()->experience;
-              $this->state['bio_data'] = Doctor::where('doc_id',$user->id)->first()->bio_data;
-              $this->state['category'] = Doctor::where('doc_id',$user->id)->first()->category;
-              $this->state['location'] = Doctor::where('doc_id',$user->id)->first()->location;
-              }
+            {
+                $user = Auth::user();
+                $doctor = Doctor::where('doc_id', $user->id)->first();
+                $map = Map::where('doctor_id', $doctor->id)->first();
+            
+                $this->state = array_merge([
+                    'email' => $user->email,
+                ], $user->withoutRelations()->toArray());
+            
+                $this->state['experience'] = $doctor->experience;
+                $this->state['bio_data'] = $doctor->bio_data;
+                $this->state['category'] = $doctor->category;
+                $this->state['location'] = $map->location ?? '';
+                $this->state['longitude'] = $map->longitude ?? '';
+                $this->state['latitude'] = $map->latitude ?? '';
+            }
 - Terminal 2:
   - Nhập lần lượt:
   - npm install
