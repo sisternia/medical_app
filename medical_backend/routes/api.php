@@ -18,4 +18,6 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/reviews', [DocsController::class, 'store']);
     Route::get('/appointments', [AppointmentsController::class, 'index']);
     Route::post('/maps', [MapController::class, 'store'])->name('maps.store');
+    Route::get('/maps', [MapController::class, 'index'])->name('maps.index');
+
 });

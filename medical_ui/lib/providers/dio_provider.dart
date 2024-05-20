@@ -1,17 +1,16 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioProvider {
   Future<dynamic> getToken(String email, String password) async {
     try {
-      var respone = await Dio().post('http://127.0.0.1:8000/api/login',
+      var response = await Dio().post('http://127.0.0.1:8000/api/login',
           data: {'email': email, 'password': password});
 
-      if (respone.statusCode == 200 && respone.data != '') {
+      if (response.statusCode == 200 && response.data != '') {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', respone.data);
+        await prefs.setString('token', response.data);
         return true;
       } else {
         return false;
@@ -134,5 +133,27 @@ class DioProvider {
     } catch (error) {
       return error;
     }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchLocationData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    if (token.isNotEmpty) {
+      final response = await Dio().get(
+        'http://127.0.0.1:8000/api/maps',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return List<Map<String, dynamic>>.from(response.data);
+      }
+    }
+
+    return [];
   }
 }

@@ -43,6 +43,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   image_picker: ^1.1.1
   http: ^1.2.1
+  mapbox_gl: ^0.14.0
 
 dev_dependencies:
   flutter_test:

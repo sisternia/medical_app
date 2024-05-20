@@ -22,12 +22,18 @@ class _DoctorDetailsState extends State<DoctorDetails> {
   Map<String, dynamic> doctor = {};
   bool isFav1 = false;
   bool isFav2 = false;
+  List<Map<String, dynamic>> locationData = [];
 
   @override
   void initState() {
+    super.initState();
     doctor = widget.doctor;
     isFav1 = widget.isFav;
-    super.initState();
+    DioProvider().fetchLocationData().then((data) {
+      setState(() {
+        locationData = data;
+      });
+    });
   }
 
   @override
@@ -89,9 +95,11 @@ class _DoctorDetailsState extends State<DoctorDetails> {
           children: <Widget>[
             AboutDoctor(
               doctor: doctor,
+              locations: locationData,
             ),
             DetailBody(
               doctor: doctor,
+              locations: locationData,
             ),
             const Spacer(),
             Padding(
@@ -114,9 +122,11 @@ class _DoctorDetailsState extends State<DoctorDetails> {
 }
 
 class AboutDoctor extends StatelessWidget {
-  const AboutDoctor({super.key, required this.doctor});
+  const AboutDoctor({super.key, required this.doctor, required this.locations});
 
   final Map<dynamic, dynamic> doctor;
+  final List<Map<String, dynamic>> locations;
+
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -142,14 +152,18 @@ class AboutDoctor extends StatelessWidget {
           Config.spaceSmall,
           SizedBox(
             width: Config.widthSize * 0.75,
-            child: Text(
-              '${doctor['location']}',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 15,
-              ),
-              softWrap: true,
-              textAlign: TextAlign.center,
+            child: Column(
+              children: locations.map((location) {
+                return Text(
+                  '${location['location']}',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 15,
+                  ),
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                );
+              }).toList(),
             ),
           ),
           Config.spaceSmall,
@@ -173,12 +187,18 @@ class AboutDoctor extends StatelessWidget {
 }
 
 class DetailBody extends StatelessWidget {
-  const DetailBody({super.key, required this.doctor});
+  const DetailBody({super.key, required this.doctor, required this.locations});
 
   final Map<dynamic, dynamic> doctor;
+  final List<Map<String, dynamic>> locations;
+
   @override
   Widget build(BuildContext context) {
     Config().init(context);
+    String locationText = locations.isNotEmpty
+        ? locations.map((location) => location['location']).join(', ')
+        : 'N/A';
+
     return Container(
       padding: const EdgeInsets.all(10),
       child: Column(
@@ -199,7 +219,7 @@ class DetailBody extends StatelessWidget {
           ),
           Config.spaceSmall,
           Text(
-            "Dr ${doctor['doctor_name']} có kinh nghiệm ${doctor['experience']} năm là ${doctor['category']} địa chỉ ${doctor['location']} ",
+            "Dr ${doctor['doctor_name']} có kinh nghiệm ${doctor['experience']} năm là ${doctor['category']} địa chỉ $locationText",
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               height: 1.5,
