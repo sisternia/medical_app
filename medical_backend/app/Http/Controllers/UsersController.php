@@ -43,10 +43,10 @@ class UsersController extends Controller
 
         $user['doctor'] = $doctorData;
         $user['details'] = $details;
-        
-        return $user; 
+
+        return $user;
     }
-    
+
         /**
      * Store a newly created resource in storage.
      */
@@ -81,7 +81,8 @@ class UsersController extends Controller
         if (!$user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email'=> ['The provider credentials are incorrect'],
-            ]);
+            ])->status(404);
+
         }
         return $user->createToken($request->email)->plainTextToken;
     }
