@@ -20,4 +20,6 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/maps', [MapController::class, 'store'])->name('maps.store');
     Route::get('/maps', [MapController::class, 'index'])->name('maps.index');
     Route::post('/user/profile-photo', [UsersController::class, 'updateProfilePhoto']);
+    Route::post('/appointments/{id}/status', [AppointmentsController::class, 'updateStatus']);
+
 });

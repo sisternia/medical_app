@@ -48,8 +48,6 @@ class UsersController extends Controller
         return $user;
     }
 
-<<<<<<< HEAD
-
     public function updateProfilePhoto(Request $request)
     {
         $request->validate([
@@ -69,9 +67,6 @@ class UsersController extends Controller
 
         return response()->json(['message' => 'Profile photo updated successfully', 'profile_photo_path' => $photoPath]);
     }
-    
-=======
->>>>>>> origin/main
         /**
      * Store a newly created resource in storage.
      */

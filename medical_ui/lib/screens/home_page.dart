@@ -78,9 +78,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                       CircleAvatar(
                         radius: 30,
-                        backgroundImage:user['profile_photo_path'] != null ? NetworkImage(
-                            "http://127.0.0.1:8000/storage/${user['profile_photo_path']}??"
-                        ) :NetworkImage('https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png') ,
+                        backgroundImage: user['profile_photo_path'] != null
+                            ? NetworkImage(
+                                "http://127.0.0.1:8000/storage/${user['profile_photo_path']}??")
+                            : null,
                       ),
                     ],
                   ),
@@ -183,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                                 List.generate(user['doctor'].length, (index) {
                               return DoctorCard(
                                 doctor: user['doctor'][index],
-                                  isFav: favList.contains(
+                                isFav: favList.contains(
                                         user['doctor'][index]['doc_id'])
                                     ? true
                                     : false,

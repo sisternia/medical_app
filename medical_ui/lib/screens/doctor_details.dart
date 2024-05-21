@@ -93,10 +93,7 @@ class _DoctorDetailsState extends State<DoctorDetails> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            AboutDoctor(
-              doctor: doctor,
-              locations: locationData
-            ),
+            AboutDoctor(doctor: doctor, locations: locationData),
             DetailBody(
               doctor: doctor,
               locations: locationData,
@@ -206,8 +203,8 @@ class DetailBody extends StatelessWidget {
         children: <Widget>[
           Config.spaceSmall,
           DoctorInfo(
-            patients: doctor['patients']!=null ? doctor['patients']:0 ,
-            exp: doctor['experience'] !=null ? doctor['experience'] : 0,
+            patients: doctor['patients'] ?? 0,
+            exp: doctor['experience'] ?? 0,
           ),
           Config.spaceMedium,
           const Text(

@@ -8,12 +8,12 @@ class DoctorCard extends StatelessWidget {
     super.key,
     required this.doctor,
     required this.isFav,
-    this.isFavPage = false, // Thêm tham số này
+    this.isFavPage = false, // Added this parameter
   });
 
   final Map<String, dynamic> doctor;
   final bool isFav;
-  final bool isFavPage; // Thêm biến này
+  final bool isFavPage; // Added this variable
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +22,8 @@ class DoctorCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
       width: isFavPage
           ? Config.widthSize - 40
-          : (Config.widthSize * 0.5) - 20, // Điều chỉnh width
-      height: isFavPage ? 150 : 300, // Điều chỉnh height
+          : (Config.widthSize * 0.5) - 20, // Adjusted width
+      height: isFavPage ? 150 : 300, // Adjusted height
       child: GestureDetector(
         child: Card(
           color: Colors.white,
@@ -39,23 +39,14 @@ class DoctorCard extends StatelessWidget {
                         topLeft: Radius.circular(15.0),
                         bottomLeft: Radius.circular(15.0),
                       ),
-
-
-
-
-                      child:
-                        Image(
-                          image: doctor['doctor_profile'] == null
-                              ? NetworkImage(doctor['doctor_profile']) :
-                          NetworkImage('https://cdn3d.iconscout.com/3d/premium/thumb/doctor-avatar-10107433-8179550.png?f=webp'),
-                          width: 100,
-                          height: 100, // Chiều cao của ảnh
-                          fit: BoxFit.cover,
-                        ),
-
-
+                      child: Image(
+                        image: NetworkImage(
+                            'http://127.0.0.1:8000${doctor['doctor_profile']}'),
+                        width: 120,
+                        height: 165, // Height of the image
+                        fit: BoxFit.cover,
+                      ),
                     ),
-
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -109,11 +100,13 @@ class DoctorCard extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(15.0)),
-                        child: Image(
-                          image: NetworkImage(
-                            "http://127.0.0.1:8000${doctor['doctor_profile']}",
-                          ),
-                          fit: BoxFit.cover,
+                        child: Image.network(
+                          'http://127.0.0.1:8000${doctor['doctor_profile']}',
+                          width: (Config.widthSize * 0.5) -
+                              20, // Set width as needed
+                          height: 165, // Set height as needed
+                          fit: BoxFit
+                              .cover, // Fit the image to cover the container
                         ),
                       ),
                     ),

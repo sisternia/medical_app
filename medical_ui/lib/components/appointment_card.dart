@@ -10,6 +10,7 @@ class AppointmentCard extends StatefulWidget {
 
   final Map<String, dynamic> doctor;
   final Color color;
+
   @override
   State<AppointmentCard> createState() => _AppointmentCardState();
 }
@@ -80,7 +81,28 @@ class _AppointmentCardState extends State<AppointmentCard> {
                           color: Colors.white,
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        final SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        final token = prefs.getString('token') ?? '';
+
+                        final response = await DioProvider()
+                            .updateAppointmentStatus(
+                                widget.doctor['appointments']['id'],
+                                'cancel',
+                                token);
+
+                        if (response == 200) {
+                          setState(() {
+                            widget.doctor['appointments']['status'] = 'cancel';
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Failed to cancel the appointment')));
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(
@@ -163,6 +185,7 @@ class ScheduleCard extends StatelessWidget {
   const ScheduleCard({super.key, required this.appointment});
 
   final Map<String, dynamic> appointment;
+
   @override
   Widget build(BuildContext context) {
     return Container(
