@@ -39,15 +39,23 @@ class DoctorCard extends StatelessWidget {
                         topLeft: Radius.circular(15.0),
                         bottomLeft: Radius.circular(15.0),
                       ),
-                      child: Image(
-                        image: NetworkImage(
-                          "http://127.0.0.1:8000${doctor['doctor_profile']}",
+
+
+
+
+                      child:
+                        Image(
+                          image: doctor['doctor_profile'] == null
+                              ? NetworkImage(doctor['doctor_profile']) :
+                          NetworkImage('https://cdn3d.iconscout.com/3d/premium/thumb/doctor-avatar-10107433-8179550.png?f=webp'),
+                          width: 100,
+                          height: 100, // Chiều cao của ảnh
+                          fit: BoxFit.cover,
                         ),
-                        width: 100,
-                        height: 150, // Chiều cao của ảnh
-                        fit: BoxFit.cover,
-                      ),
+
+
                     ),
+
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),

@@ -158,6 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   title: const Text('Take a Photo'),
                   onTap: () {
                     Navigator.pop(context, ImageSource.camera);
+
                   },
                 ),
                 ListTile(

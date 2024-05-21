@@ -95,7 +95,7 @@ class _DoctorDetailsState extends State<DoctorDetails> {
           children: <Widget>[
             AboutDoctor(
               doctor: doctor,
-              locations: locationData,
+              locations: locationData
             ),
             DetailBody(
               doctor: doctor,
@@ -206,8 +206,8 @@ class DetailBody extends StatelessWidget {
         children: <Widget>[
           Config.spaceSmall,
           DoctorInfo(
-            patients: doctor['patients'],
-            exp: doctor['experience'],
+            patients: doctor['patients']!=null ? doctor['patients']:0 ,
+            exp: doctor['experience'] !=null ? doctor['experience'] : 0,
           ),
           Config.spaceMedium,
           const Text(
@@ -219,7 +219,7 @@ class DetailBody extends StatelessWidget {
           ),
           Config.spaceSmall,
           Text(
-            "Dr ${doctor['doctor_name']} có kinh nghiệm ${doctor['experience']} năm là ${doctor['category']} địa chỉ $locationText",
+            "Dr ${doctor['doctor_name']} có kinh nghiệm ${doctor['experience']} năm là ${doctor['experience']} địa chỉ $locationText",
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               height: 1.5,

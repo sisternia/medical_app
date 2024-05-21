@@ -110,21 +110,36 @@ class _LoginFormState extends State<LoginForm> {
                       if (tokenValue.isNotEmpty && tokenValue != '') {
                         final response =
                             await DioProvider().getUser(tokenValue);
+
                         if (response != null) {
-                          setState(() {
-                            Map<String, dynamic> appointment = {};
-                            final user = json.decode(response);
-                            for (var doctorData in user['doctor']) {
-                              if (doctorData['appointments'] != null) {
-                                appointment = doctorData;
-                              }
-                            }
-                            auth.loginSuccess(user, appointment);
-                            MyApp.navigatorKey.currentState!.pushNamed('main');
-                          });
+
+
+
+                              setState(() {
+                                Map<String, dynamic> appointment = {};
+                                final user = json.decode(response);
+                                for (var doctorData in user['doctor']) {
+                                  if (doctorData['appointments'] != null) {
+                                    appointment = doctorData;
+                                  }
+                                }
+                                auth.loginSuccess(user, appointment);
+                                MyApp.navigatorKey.currentState!.pushNamed('main');
+                              });
+
+
+
+
+
+
+
                         }
+
+
+
                       }
                     }
+
                   }
                 },
                 disable: false,
