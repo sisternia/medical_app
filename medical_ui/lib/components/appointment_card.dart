@@ -188,7 +188,7 @@ class ScheduleCard extends StatelessWidget {
             style: const TextStyle(color: Colors.white),
           ),
           const SizedBox(
-            width: 50,
+            width: 40,
           ),
           const Icon(
             Icons.access_alarm,

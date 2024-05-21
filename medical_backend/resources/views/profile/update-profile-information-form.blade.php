@@ -103,8 +103,8 @@
             <script>
                 mapboxgl.accessToken = 'pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ';
 
-                // Fetch initial center from database values or localStorage
-                let initialCenter = JSON.parse(localStorage.getItem('mapCenter')) || {
+                // Fetch initial center from database values
+                let initialCenter = {
                     lng: {{ $state['longitude'] ?? -74.5 }},
                     lat: {{ $state['latitude'] ?? 40 }}
                 };
@@ -116,31 +116,23 @@
                     zoom: 9,
                 });
 
-                let marker;
+                let marker = new mapboxgl.Marker({ draggable: true });
 
                 map.on('load', function () {
                     if (initialCenter.lng !== -74.5 && initialCenter.lat !== 40) {
-                        marker = new mapboxgl.Marker()
-                            .setLngLat(initialCenter)
-                            .addTo(map);
+                        marker.setLngLat(initialCenter).addTo(map);
                     }
 
                     map.on('click', function (e) {
-                        if (typeof marker !== 'undefined') {
-                            marker.remove();
-                        }
+                        marker.setLngLat(e.lngLat).addTo(map);
 
-                        marker = new mapboxgl.Marker()
-                            .setLngLat(e.lngLat)
-                            .addTo(map);
+                        const locationInput = document.getElementById('location');
+                        const longitudeInput = document.getElementById('longitude');
+                        const latitudeInput = document.getElementById('latitude');
 
                         fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${e.lngLat.lng},${e.lngLat.lat}.json?access_token=${mapboxgl.accessToken}`)
                             .then(response => response.json())
                             .then(data => {
-                                const locationInput = document.getElementById('location');
-                                const longitudeInput = document.getElementById('longitude');
-                                const latitudeInput = document.getElementById('latitude');
-                                
                                 locationInput.value = data.features[0].place_name;
                                 longitudeInput.value = e.lngLat.lng;
                                 latitudeInput.value = e.lngLat.lat;
@@ -148,26 +140,27 @@
                                 locationInput.dispatchEvent(new Event('input'));
                                 longitudeInput.dispatchEvent(new Event('input'));
                                 latitudeInput.dispatchEvent(new Event('input'));
-
-                                localStorage.setItem('mapCenter', JSON.stringify(e.lngLat));
                             });
                     });
+                });
 
-                    // Check if locationInput has a value
-                    const locationInput = document.getElementById('location');
-                    if (locationInput.value) {
-                        const lngLat = initialCenter;
+                document.querySelector('x-button').addEventListener('click', function () {
+                    const lngLat = marker.getLngLat();
+                    localStorage.setItem('savedLng', lngLat.lng);
+                    localStorage.setItem('savedLat', lngLat.lat);
+                });
 
-                        // Create a new marker at the locationInput position
-                        marker = new mapboxgl.Marker()
-                            .setLngLat(lngLat)
-                            .addTo(map);
+                window.addEventListener('load', function () {
+                    const savedLng = parseFloat(localStorage.getItem('savedLng'));
+                    const savedLat = parseFloat(localStorage.getItem('savedLat'));
+
+                    if (!isNaN(savedLng) && !isNaN(savedLat)) {
+                        marker.setLngLat({ lng: savedLng, lat: savedLat }).addTo(map);
+                        map.setCenter({ lng: savedLng, lat: savedLat });
                     }
                 });
             </script>
         </div>
-
-
 
         </script>
         <!-- Email -->

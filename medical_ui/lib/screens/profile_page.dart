@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +18,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic> user = {};
-  Map<String, dynamic> doctor = {};
   final ImagePicker _picker = ImagePicker();
   XFile? _imageFile;
 
@@ -33,75 +31,115 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CircularProgressIndicator(),
             )
           : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 15,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    const SizedBox(height: 20),
-                    GestureDetector(
-                      onTap: _pickImage,
-                      child: CircleAvatar(
-                        radius: 60,
-                        backgroundImage: _imageFile == null
-                            ? NetworkImage(
-                                "http://127.0.0.1:8000/storage/${user['profile_photo_path']}")
-                            : FileImage(File(_imageFile!.path))
-                                as ImageProvider,
-                        onBackgroundImageError: (_, __) {
-                          // Khi không thể tải hình ảnh từ server
-                          setState(() {
-                            _imageFile = null;
-                          });
-                        },
-                        child: _imageFile == null
-                            ? const Icon(
-                                Icons.person,
-                                size: 60,
-                                color: Colors.grey,
-                              )
-                            : null,
-                      ),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 15,
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      user['name'],
-                      style: const TextStyle(
-                        color: Config.blackColor,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      user['email'],
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: ListView(
-                          children: [
-                            _buildTile(FontAwesomeIcons.cogs, 'Settings'),
-                            _buildTile(FontAwesomeIcons.user, 'User Details'),
-                            _buildTile(FontAwesomeIcons.mapLocation, 'Map'),
-                            const Divider(color: Colors.grey),
-                            _buildTile(
-                                FontAwesomeIcons.infoCircle, 'Information'),
-                            _buildTile(FontAwesomeIcons.signOutAlt, 'Logout',
-                                logout: true),
-                          ],
+                    child: Column(
+                      children: <Widget>[
+                        const SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 60,
+                            backgroundImage: _imageFile == null
+                                ? NetworkImage(
+                                    "http://127.0.0.1:8000/storage/${user['profile_photo_path']}")
+                                : FileImage(File(_imageFile!.path))
+                                    as ImageProvider,
+                            onBackgroundImageError: (_, __) {
+                              setState(() {
+                                _imageFile = null;
+                              });
+                            },
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 20),
+                        Text(
+                          user['name'],
+                          style: const TextStyle(
+                            color: Config.blackColor,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          user['email'],
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            // Xử lý sự kiện khi nhấp vào nút Edit Profile
+                          },
+                          icon: const Icon(
+                            Icons.edit,
+                            color: Config.primaryColor,
+                          ),
+                          label: const Text(
+                            'Edit Profile',
+                            style: TextStyle(color: Config.primaryColor),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Config.primaryColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Expanded(
+                          child: DefaultTabController(
+                            length: 2,
+                            child: Column(
+                              children: <Widget>[
+                                TabBar(
+                                  tabs: [
+                                    Tab(
+                                      icon: FaIcon(FontAwesomeIcons.infoCircle),
+                                      text: 'About Me',
+                                    ),
+                                    Tab(
+                                      icon:
+                                          FaIcon(FontAwesomeIcons.mapMarkerAlt),
+                                      text: 'Location',
+                                    ),
+                                  ],
+                                  labelColor: Config.primaryColor,
+                                  unselectedLabelColor: Colors.grey,
+                                ),
+                                Expanded(
+                                  child: TabBarView(
+                                    children: <Widget>[
+                                      Center(child: Text('About Me Content')),
+                                      Center(child: Text('Location Content')),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: IconButton(
+                      icon: const FaIcon(FontAwesomeIcons.signOutAlt,
+                          color: Config.primaryColor),
+                      onPressed: _confirmLogout,
+                    ),
+                  ),
+                ],
               ),
             ),
     );
@@ -142,31 +180,70 @@ class _ProfilePageState extends State<ProfilePage> {
       source: action,
     );
 
-    setState(() {
-      _imageFile = selectedImage;
-    });
+    if (selectedImage != null) {
+      setState(() {
+        _imageFile = selectedImage;
+      });
+      _uploadImage();
+    }
   }
 
-  Widget _buildTile(IconData icon, String title, {bool logout = false}) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Config.primaryColor,
-        child: FaIcon(icon, size: 20.0, color: Config.whiteColor),
-      ),
-      title: Text(
-        title,
-        style: const TextStyle(color: Config.blackColor),
-      ),
-      trailing: const CircleAvatar(
-        backgroundColor: Config.whiteColor,
-        child: Icon(Icons.arrow_forward, color: Config.primaryColor),
-      ),
-      onTap: logout
-          ? _logout
-          : () {
-              // Xử lý sự kiện khi nhấp vào ListTile
-            },
+  Future<void> _uploadImage() async {
+    if (_imageFile == null) return;
+
+    final token = await _getToken();
+    if (token == null) return;
+
+    try {
+      final response = await DioProvider().uploadProfileImage(
+        File(_imageFile!.path),
+        token,
+      );
+
+      if (response != null && response['profile_photo_path'] != null) {
+        setState(() {
+          user['profile_photo_path'] = response['profile_photo_path'];
+        });
+      }
+    } catch (e) {
+      print("Upload error: $e");
+    }
+  }
+
+  Future<String?> _getToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  Future<void> _confirmLogout() async {
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Center(child: Text('Confirm Logout')),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Yes'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('No'),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
+
+    if (result == true) {
+      _logout();
+    }
   }
 
   Future<void> _logout() async {

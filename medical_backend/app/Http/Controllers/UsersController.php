@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class UsersController extends Controller
 {
@@ -45,6 +46,27 @@ class UsersController extends Controller
         $user['details'] = $details;
         
         return $user; 
+    }
+
+
+    public function updateProfilePhoto(Request $request)
+    {
+        $request->validate([
+            'profile_photo' => 'required|image|max:2048',
+        ]);
+
+        $user = Auth::user();
+        $photoPath = $request->file('profile_photo')->store('profile-photos', 'public');
+
+        // Xóa ảnh cũ nếu có
+        if ($user->profile_photo_path) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+        }
+
+        $user->profile_photo_path = $photoPath;
+        $user->save();
+
+        return response()->json(['message' => 'Profile photo updated successfully', 'profile_photo_path' => $photoPath]);
     }
     
         /**

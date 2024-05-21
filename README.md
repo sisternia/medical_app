@@ -2,7 +2,7 @@ Settings
 * Mở 2 Terminal của medical_backend
 - Terminal 1:
   -  Nhập composer update
-  -  Bỏ đuôi .example tại .env sau đó chỉnh sửa APP_URL=
+  -  Bỏ đuôi .example tại .env sau đó chỉnh sửa APP_URL= , MAPBOX_TOKEN=pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ
   -  Nhập tiếp php artisan migrate
   -  Theo đường dẫn medical-main\medical_backend\vendor\laravel\jetstream\src\Http\Livewire\UpdateProfileInformationForm.php
   -  Thêm đoạn mã này vào để hiển thị dữ liệu Profile trong Laravel

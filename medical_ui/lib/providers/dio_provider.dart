@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -155,5 +156,30 @@ class DioProvider {
     }
 
     return [];
+  }
+
+  Future<Map<String, dynamic>?> uploadProfileImage(
+      File image, String token) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'profile_photo': await MultipartFile.fromFile(image.path),
+      });
+
+      var response = await Dio().post(
+        'http://127.0.0.1:8000/api/user/profile-photo',
+        data: formData,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
   }
 }
