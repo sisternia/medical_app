@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:medical/auth/forgot_pass_form.dart';
 import 'package:medical/auth/login_form.dart';
 import 'package:medical/auth/sign_up_form.dart';
 import 'package:medical/components/social_button.dart';
 import 'package:medical/utils/text.dart';
-
 import '../utils/config.dart';
 
 class AuthPage extends StatefulWidget {
@@ -15,17 +15,14 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   bool isSignIn = true;
+
   @override
   Widget build(BuildContext context) {
     Config().init(context);
-    //build login text field
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 15,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -54,7 +51,14 @@ class _AuthPageState extends State<AuthPage> {
               isSignIn
                   ? Center(
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ForgotPasswordForm(),
+                            ),
+                          );
+                        },
                         child: Text(
                           AppText.enText['forgot-password']!,
                           style: const TextStyle(
@@ -113,9 +117,9 @@ class _AuthPageState extends State<AuthPage> {
                         color: Colors.black,
                       ),
                     ),
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),

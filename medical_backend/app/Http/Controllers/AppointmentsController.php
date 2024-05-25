@@ -35,21 +35,21 @@ class AppointmentsController extends Controller
         return $appointment;
     }
     public function updateStatus(Request $request, $id)
-{
-    $appointment = Appointments::find($id);
-    if ($appointment && $appointment->user_id == Auth::user()->id) {
-        $appointment->status = $request->get('status');
-        $appointment->save();
+    {
+        $appointment = Appointments::find($id);
+        if ($appointment && $appointment->user_id == Auth::user()->id) {
+            $appointment->status = $request->get('status');
+            $appointment->save();
 
-        return response()->json([
-            'success' => 'Appointment status updated successfully!',
-        ], 200);
-    } else {
-        return response()->json([
-            'error' => 'Appointment not found or unauthorized',
-        ], 404);
+            return response()->json([
+                'success' => 'Appointment status updated successfully!',
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => 'Appointment not found or unauthorized',
+            ], 404);
+        }
     }
-}
 
 
     /**
