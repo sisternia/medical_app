@@ -136,39 +136,41 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           Config.spaceMedium,
-                          const Text(
-                            'Appointment Today',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                          if (user['type'] != "doctor") ...[
+                            const Text(
+                              'Appointment Today',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Config.spaceSmall,
-                          doctor.isNotEmpty
-                              ? AppointmentCard(
-                                  doctor: doctor,
-                                  color: Config.primaryColor,
-                                )
-                              : Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(20),
-                                      child: Text(
-                                        'No Appointment Today',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
+                            Config.spaceSmall,
+                            doctor.isNotEmpty
+                                ? AppointmentCard(
+                                    doctor: doctor,
+                                    color: Config.primaryColor,
+                                  )
+                                : Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade300,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20),
+                                        child: Text(
+                                          'No Appointment Today',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                          Config.spaceMedium,
+                            Config.spaceMedium,
+                          ],
                           const Text(
                             'Top Doctor',
                             style: TextStyle(

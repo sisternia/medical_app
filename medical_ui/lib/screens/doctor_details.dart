@@ -23,6 +23,7 @@ class _DoctorDetailsState extends State<DoctorDetails> {
   bool isFav1 = false;
   bool isFav2 = false;
   List<Map<String, dynamic>> locationData = [];
+  Map<String, dynamic> user = {};
 
   @override
   void initState() {
@@ -38,57 +39,62 @@ class _DoctorDetailsState extends State<DoctorDetails> {
 
   @override
   Widget build(BuildContext context) {
-    //final doctor = ModalRoute.of(context)!.settings.arguments as Map;
+    user = Provider.of<AuthModel>(context, listen: false).getUser;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
         appTitle: 'Doctor Details',
         icon: const FaIcon(Icons.arrow_back_ios),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final list =
-                  Provider.of<AuthModel>(context, listen: false).getFav;
+        actions: user['type'] != 'doctor'
+            ? [
+                IconButton(
+                  onPressed: () async {
+                    final list =
+                        Provider.of<AuthModel>(context, listen: false).getFav;
 
-              if (list.contains(doctor['doc_id'])) {
-                list.removeWhere((id) => id == doctor['doc_id']);
-              } else {
-                list.add(doctor['doc_id']);
-              }
+                    if (list.contains(doctor['doc_id'])) {
+                      list.removeWhere((id) => id == doctor['doc_id']);
+                    } else {
+                      list.add(doctor['doc_id']);
+                    }
 
-              Provider.of<AuthModel>(context, listen: false).setFavList(list);
+                    Provider.of<AuthModel>(context, listen: false)
+                        .setFavList(list);
 
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-              final token = prefs.getString('token') ?? '';
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    final token = prefs.getString('token') ?? '';
 
-              if (token.isNotEmpty && token != '') {
-                final response = await DioProvider().storeFavDoc(token, list);
+                    if (token.isNotEmpty && token != '') {
+                      final response =
+                          await DioProvider().storeFavDoc(token, list);
 
-                if (response == 200) {
-                  setState(() {
-                    isFav1 = !isFav1;
-                  });
-                }
-              }
-            },
-            icon: FaIcon(
-              isFav1 ? Icons.favorite_rounded : Icons.favorite_outline,
-              color: Colors.red[600],
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isFav2 = !isFav2;
-              });
-            },
-            icon: FaIcon(
-              isFav2 ? Icons.message_rounded : Icons.message_outlined,
-              color: Colors.blue[600],
-            ),
-          ),
-        ],
+                      if (response == 200) {
+                        setState(() {
+                          isFav1 = !isFav1;
+                        });
+                      }
+                    }
+                  },
+                  icon: FaIcon(
+                    isFav1 ? Icons.favorite_rounded : Icons.favorite_outline,
+                    color: Colors.red[600],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isFav2 = !isFav2;
+                    });
+                  },
+                  icon: FaIcon(
+                    isFav2 ? Icons.message_rounded : Icons.message_outlined,
+                    color: Colors.blue[600],
+                  ),
+                ),
+              ]
+            : [],
       ),
       body: SafeArea(
         child: Column(
@@ -99,18 +105,19 @@ class _DoctorDetailsState extends State<DoctorDetails> {
               locations: locationData,
             ),
             const Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Button(
-                width: double.infinity,
-                title: 'Book Appointment',
-                onPressed: () {
-                  Navigator.of(context).pushNamed('booking_page',
-                      arguments: {"doctor_id": doctor['doc_id']});
-                },
-                disable: false,
-              ),
-            )
+            if (user['type'] != 'doctor')
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Button(
+                  width: double.infinity,
+                  title: 'Book Appointment',
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('booking_page',
+                        arguments: {"doctor_id": doctor['doc_id']});
+                  },
+                  disable: false,
+                ),
+              )
           ],
         ),
       ),
