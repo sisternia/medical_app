@@ -238,23 +238,28 @@ class DetailBody extends StatelessWidget {
 }
 
 class DoctorInfo extends StatelessWidget {
-  const DoctorInfo({super.key, required this.patients, required this.exp});
+  const DoctorInfo({
+    super.key,
+    required this.patients,
+    required this.exp,
+  });
 
   final int patients;
   final int exp;
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        InfoCard(label: 'Patients', value: '$patients'),
+        InfoCard(label: 'Patients', value: patients != 0 ? '$patients' : '0'),
         const SizedBox(
           width: 15,
         ),
-        InfoCard(label: 'Experients', value: '$exp Year'),
+        InfoCard(label: 'Experience', value: exp != 0 ? '$exp Year' : '0'),
         const SizedBox(
           width: 15,
         ),
-        const InfoCard(label: 'Rating', value: '4.5'),
+        const InfoCard(label: 'Rating', value: '0'),
       ],
     );
   }

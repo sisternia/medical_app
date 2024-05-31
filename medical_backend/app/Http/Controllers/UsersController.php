@@ -30,7 +30,6 @@ class UsersController extends Controller
         $details = $user->user_details;
 
         foreach($doctorData as $data){
-            //sorting doctor name and doctor details
             foreach($doctor as $info){
                 if($data['doc_id'] == $info['id']){
                     $data['doctor_name'] = $info['name'];

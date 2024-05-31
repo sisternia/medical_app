@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioProvider {
-  Future<dynamic> getToken(String email, String password) async {
+  Future<bool> getToken(String email, String password) async {
     try {
       var response = await Dio().post('http://127.0.0.1:8000/api/login',
           data: {'email': email, 'password': password});
@@ -17,7 +17,7 @@ class DioProvider {
         return false;
       }
     } catch (error) {
-      return error;
+      return false;
     }
   }
 
@@ -34,18 +34,19 @@ class DioProvider {
     }
   }
 
-  Future<dynamic> registerUser(
+  Future<String> registerUser(
       String username, String email, String password) async {
     try {
-      var user = await Dio().post('http://127.0.0.1:8000/api/register',
+      var response = await Dio().post('http://127.0.0.1:8000/api/register',
           data: {'name': username, 'email': email, 'password': password});
-      if (user.statusCode == 201 && user.data != '') {
-        return true;
+
+      if (response.statusCode == 201 && response.data != '') {
+        return 'success';
       } else {
-        return false;
+        return response.data['message'] ?? 'Registration failed';
       }
     } catch (error) {
-      return error;
+      return 'Email has already been taken';
     }
   }
 

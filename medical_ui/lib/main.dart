@@ -1,3 +1,4 @@
+// main.dart
 import 'package:flutter/material.dart';
 import 'package:medical/main_layout.dart';
 import 'package:medical/models/auth_model.dart';
@@ -19,7 +20,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //define ThemeData here
     return ChangeNotifierProvider<AuthModel>(
       create: (context) => AuthModel(),
       child: MaterialApp(
@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Doctor App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          //pre-define input decoration
           inputDecorationTheme: const InputDecorationTheme(
             focusColor: Config.primaryColor,
             border: Config.outlinedBorder,
@@ -52,7 +51,6 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const AuthPage(),
           'main': (context) => const MainLayout(),
-          //'doctor_details': (context) => const DoctorDetails(),
           'booking_page': (context) => const BookingPage(),
           'success_booking': (context) => const AppointmentBooked(),
         },

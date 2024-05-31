@@ -280,9 +280,6 @@ class ScheduleCard extends StatelessWidget {
             color: Config.primaryColor,
             size: 15,
           ),
-          const SizedBox(
-            width: 5,
-          ),
           Text(
             '$day, $date',
             style: const TextStyle(

@@ -21,6 +21,7 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passController = TextEditingController();
   bool obsecurePass = true;
+  String _errorMessage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +30,9 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -52,8 +54,9 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
           Config.spaceSmall,
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: TextFormField(
               controller: _passController,
               keyboardType: TextInputType.visiblePassword,
@@ -92,6 +95,14 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
           Config.spaceSmall,
+          if (_errorMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                _errorMessage,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
           Consumer<AuthModel>(
             builder: (context, auth, child) {
               return Button(
@@ -125,6 +136,10 @@ class _LoginFormState extends State<LoginForm> {
                           });
                         }
                       }
+                    } else {
+                      setState(() {
+                        _errorMessage = 'Email or Password incorrect';
+                      });
                     }
                   }
                 },

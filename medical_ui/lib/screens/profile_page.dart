@@ -251,15 +251,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final token = prefs.getString('token') ?? '';
 
     if (token.isNotEmpty && token != '') {
-      //logout here
       final response = await DioProvider().logout(token);
 
       if (response == 200) {
-        //if successfully delete access token
-        //then delete token saved at Shared Preference as well
         await prefs.remove('token');
         setState(() {
-          //redirect to login page
           MyApp.navigatorKey.currentState!.pushReplacementNamed('/');
         });
       }

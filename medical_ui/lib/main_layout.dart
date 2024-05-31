@@ -1,9 +1,12 @@
+// main_layout.dart
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medical/screens/appointment_page.dart';
 import 'package:medical/screens/fav_page.dart';
 import 'package:medical/screens/home_page.dart';
 import 'package:medical/screens/profile_page.dart';
+import 'package:provider/provider.dart';
+import 'package:medical/models/auth_model.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -16,8 +19,12 @@ class _MainLayoutState extends State<MainLayout> {
   //variable declaration
   int currentPage = 0;
   final PageController _page = PageController();
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AuthModel>(context).getUser;
+    final isDoctor = user['type'] == 'doctor';
+
     return Scaffold(
       body: PageView(
         controller: _page,
@@ -26,11 +33,11 @@ class _MainLayoutState extends State<MainLayout> {
             currentPage = value;
           });
         }),
-        children: const <Widget>[
-          HomePage(),
-          FavPage(),
-          AppointmentPage(),
-          ProfilePage(),
+        children: <Widget>[
+          const HomePage(),
+          if (!isDoctor) const FavPage(),
+          const AppointmentPage(),
+          const ProfilePage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -45,20 +52,21 @@ class _MainLayoutState extends State<MainLayout> {
             );
           });
         },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+        items: <BottomNavigationBarItem>[
+          const BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.houseChimneyMedical),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.solidHeart),
-            label: 'Favorite',
-          ),
-          BottomNavigationBarItem(
+          if (!isDoctor)
+            const BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.solidHeart),
+              label: 'Favorite',
+            ),
+          const BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.solidCalendarCheck),
             label: 'Appointment',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.solidUser),
             label: 'Profile',
           ),
