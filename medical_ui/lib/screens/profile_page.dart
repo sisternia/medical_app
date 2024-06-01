@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:medical/components/map.dart';
 import 'package:medical/main.dart';
 import 'package:medical/models/auth_model.dart';
 import 'package:medical/providers/dio_provider.dart';
@@ -119,7 +120,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: TabBarView(
                                     children: <Widget>[
                                       Center(child: Text('About Me Content')),
-                                      Center(child: Text('Location Content')),
+                                      Center(
+                                          child: MapPage()), // Thay đổi ở đây
                                     ],
                                   ),
                                 ),
