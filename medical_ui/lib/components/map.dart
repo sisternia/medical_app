@@ -35,6 +35,7 @@ class _MapViewState extends State<MapView> {
   List<dynamic> _suggestions = [];
   bool _isSearching = false;
   bool _showSearchBar = false;
+  LatLng? _markerPosition;
 
   @override
   void initState() {
@@ -54,6 +55,24 @@ class _MapViewState extends State<MapView> {
       });
     } else {
       throw Exception('Failed to load suggestions');
+    }
+  }
+
+  Future<void> _getAddressFromCoordinates(LatLng coordinates) async {
+    final url =
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/${coordinates.longitude},${coordinates.latitude}.json?access_token=$_mapboxToken';
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['features'].isNotEmpty) {
+        final placeName = data['features'][0]['place_name'];
+        setState(() {
+          _searchController.text = placeName;
+          _markerPosition = coordinates;
+        });
+      }
+    } else {
+      throw Exception('Failed to get address from coordinates');
     }
   }
 
@@ -83,12 +102,22 @@ class _MapViewState extends State<MapView> {
       _isSearching = false;
       _suggestions = [];
       _showSearchBar = false;
+      _markerPosition = latLng;
     });
   }
 
   void _toggleSearchBar() {
     setState(() {
       _showSearchBar = !_showSearchBar;
+    });
+  }
+
+  void _clearSearch() {
+    setState(() {
+      _searchController.clear();
+      _suggestions = [];
+      _isSearching = false;
+      _markerPosition = null;
     });
   }
 
@@ -106,9 +135,12 @@ class _MapViewState extends State<MapView> {
       children: [
         FlutterMap(
           mapController: _mapController,
-          options: const MapOptions(
-            center: LatLng(27.175002, 78.0421170902921),
+          options: MapOptions(
+            center: const LatLng(27.175002, 78.0421170902921),
             zoom: 17.0,
+            onTap: (tapPosition, point) async {
+              await _getAddressFromCoordinates(point);
+            },
           ),
           children: [
             TileLayer(
@@ -120,6 +152,21 @@ class _MapViewState extends State<MapView> {
                 'id': 'mapbox.mapbox-streets-v7'
               },
             ),
+            if (_markerPosition != null)
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    width: 80.0,
+                    height: 80.0,
+                    point: _markerPosition!,
+                    child: const Icon(
+                      Icons.location_on,
+                      color: Colors.red,
+                      size: 40.0,
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
         if (widget.showControls) ...[
@@ -162,11 +209,15 @@ class _MapViewState extends State<MapView> {
                               Expanded(
                                 child: TextField(
                                   controller: _searchController,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     border: InputBorder.none,
                                     enabledBorder: InputBorder.none,
                                     focusedBorder: InputBorder.none,
                                     hintText: 'Search',
+                                    suffixIcon: IconButton(
+                                      icon: const Icon(Icons.clear),
+                                      onPressed: _clearSearch,
+                                    ),
                                   ),
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {

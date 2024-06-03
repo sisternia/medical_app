@@ -28,10 +28,15 @@ class _AuthPageState extends State<AuthPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Image.asset(
+                'assets/images/Logo.png',
+                height: 75, // Đặt chiều cao tùy ý
+                width: 75, // Đặt chiều rộng tùy ý
+              ),
               Text(
                 AppText.enText['welcome_text']!,
                 style: const TextStyle(
-                  fontSize: 36,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -45,7 +50,7 @@ class _AuthPageState extends State<AuthPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Config.spaceBig,
+              Config.spaceSmall,
               isSignIn ? const LoginForm() : const SignUpForm(),
               Config.spaceSmall,
               isSignIn

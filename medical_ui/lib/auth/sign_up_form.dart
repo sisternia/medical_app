@@ -36,15 +36,15 @@ class _SignUpFormState extends State<SignUpForm> {
               keyboardType: TextInputType.text,
               cursorColor: Config.primaryColor,
               decoration: const InputDecoration(
-                hintText: 'Username',
-                labelText: 'Username',
+                hintText: 'Name',
+                labelText: 'Name',
                 alignLabelWithHint: true,
                 prefixIcon: Icon(Icons.person_outlined),
                 prefixIconColor: Config.primaryColor,
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your username';
+                  return 'Please enter your name';
                 }
                 return null;
               },
