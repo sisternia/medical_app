@@ -25,9 +25,15 @@ class MapController extends Controller
         $map->save();
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $locations = Map::all();
-        return response()->json($locations, 200);
+        $doctorId = $request->query('doctor_id');
+        $userDetailsId = $request->query('user_detail_id');
+        if ($doctorId) {
+            $address = Map::where('doctor_id', $doctorId)->get();
+        } else {
+            $address = Map::where('user_detail_id', $userDetailsId)->get();
+        }
+        return response()->json($address, 200);
     }
 }

@@ -43,11 +43,11 @@ class _MapViewState extends State<MapView> {
   void initState() {
     super.initState();
     _mapController = MapController();
-    DioProvider().fetchLocationData().then((data) {
-      setState(() {
-        locationData = data;
-      });
-    });
+    // DioProvider().fetchLocationData().then((data) {
+    //   setState(() {
+    //     locationData = data;
+    //   });
+    // });
   }
 
   Future<void> _getPlaceSuggestions(String query) async {

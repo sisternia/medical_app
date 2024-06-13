@@ -30,10 +30,13 @@ class _DoctorDetailsState extends State<DoctorDetails> {
     super.initState();
     doctor = widget.doctor;
     isFav1 = widget.isFav;
-    DioProvider().fetchLocationData().then((data) {
-      setState(() {
-        locationData = data;
-      });
+    fetchLocationData(doctor['doc_id']);
+  }
+
+  void fetchLocationData(int doctorId) async {
+    final data = await DioProvider().fetchLocationData(doctorId);
+    setState(() {
+      locationData = data;
     });
   }
 

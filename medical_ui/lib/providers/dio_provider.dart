@@ -137,13 +137,14 @@ class DioProvider {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchLocationData() async {
+  Future<List<Map<String, dynamic>>> fetchLocationData(int doctorId) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
     if (token.isNotEmpty) {
       final response = await Dio().get(
         'http://127.0.0.1:8000/api/maps',
+        queryParameters: {'doctor_id': doctorId},
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
