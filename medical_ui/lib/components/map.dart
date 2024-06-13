@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:medical/providers/dio_provider.dart';
 
 class MapPage extends StatelessWidget {
   final bool showControls;
@@ -36,11 +37,17 @@ class _MapViewState extends State<MapView> {
   bool _isSearching = false;
   bool _showSearchBar = false;
   LatLng? _markerPosition;
+  List<Map<String, dynamic>> locationData = [];
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
+    DioProvider().fetchLocationData().then((data) {
+      setState(() {
+        locationData = data;
+      });
+    });
   }
 
   Future<void> _getPlaceSuggestions(String query) async {
@@ -213,7 +220,13 @@ class _MapViewState extends State<MapView> {
                                     border: InputBorder.none,
                                     enabledBorder: InputBorder.none,
                                     focusedBorder: InputBorder.none,
-                                    hintText: 'Search',
+                                    hintText: locationData
+                                        .map((location) => location['location'])
+                                        .join(', '),
+                                    hintStyle: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 15,
+                                    ),
                                     suffixIcon: IconButton(
                                       icon: const Icon(Icons.clear),
                                       onPressed: _clearSearch,

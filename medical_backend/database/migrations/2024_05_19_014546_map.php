@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('maps', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('location');
-            $table->decimal('longitude', 10, 7);
-            $table->decimal('latitude', 10, 7);
+            $table->string('location')->default('');
+            $table->decimal('longitude', 10, 7)->default(0.0000000);
+            $table->decimal('latitude', 10, 7)->default(0.0000000);
             $table->unsignedInteger('doctor_id')->nullable();
             $table->unsignedInteger('user_id')->nullable();
             $table->unsignedInteger('user_detail_id')->nullable();

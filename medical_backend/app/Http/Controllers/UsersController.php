@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointments;
 use App\Models\User;
 use App\Models\Doctor;
+use App\Models\Map;
 use App\Models\UserDetails;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -129,7 +130,17 @@ class UsersController extends Controller
             'user_id'=>$user->id,
             'status'=>'active',
         ]);
-
+        
+        // Create a new map entry
+        Map::create([
+            'user_id' => $user->id,
+            'user_detail_id' => $userInfo->id,
+            'location' => '', // Default blank location
+            'longitude' => 0.0000000, // Default longitude
+            'latitude' => 0.0000000, // Default latitude
+            'doctor_id' => null,
+        ]);
+        
         return $user;
     }
 
