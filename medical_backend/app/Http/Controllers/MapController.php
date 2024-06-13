@@ -29,11 +29,16 @@ class MapController extends Controller
     {
         $doctorId = $request->query('doctor_id');
         $userDetailsId = $request->query('user_detail_id');
+    
         if ($doctorId) {
             $address = Map::where('doctor_id', $doctorId)->get();
-        } else {
+        } elseif ($userDetailsId) {
             $address = Map::where('user_detail_id', $userDetailsId)->get();
+        } else {
+            return response()->json([], 400); // Return a bad request if no valid parameter is provided
         }
+    
         return response()->json($address, 200);
     }
+    
 }

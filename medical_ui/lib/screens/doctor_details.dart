@@ -34,7 +34,7 @@ class _DoctorDetailsState extends State<DoctorDetails> {
   }
 
   void fetchLocationData(int doctorId) async {
-    final data = await DioProvider().fetchLocationData(doctorId);
+    final data = await DioProvider().fetchLocationData(doctorId: doctorId);
     setState(() {
       locationData = data;
     });
