@@ -67,6 +67,23 @@ class UsersController extends Controller
 
         return response()->json(['message' => 'Profile photo updated successfully', 'profile_photo_path' => $photoPath]);
     }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+    
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+    
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+        $user->save();
+    
+        return response()->json(['status' => 'success', 'user' => $user], 200);
+    }
+    
         /**
      * Store a newly created resource in storage.
      */

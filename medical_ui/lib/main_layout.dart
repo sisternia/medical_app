@@ -5,6 +5,7 @@ import 'package:medical/screens/appointment_page.dart';
 import 'package:medical/screens/fav_page.dart';
 import 'package:medical/screens/home_page.dart';
 import 'package:medical/screens/profile_page.dart';
+import 'package:medical/screens/user_booking.dart'; // Import the user_booking page
 import 'package:provider/provider.dart';
 import 'package:medical/models/auth_model.dart';
 
@@ -16,7 +17,7 @@ class MainLayout extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  //variable declaration
+  // Variable declaration
   int currentPage = 0;
   final PageController _page = PageController();
 
@@ -24,6 +25,7 @@ class _MainLayoutState extends State<MainLayout> {
   Widget build(BuildContext context) {
     final user = Provider.of<AuthModel>(context).getUser;
     final isDoctor = user['type'] == 'doctor';
+    final isUser = user['type'] == 'user';
 
     return Scaffold(
       body: PageView(
@@ -37,6 +39,7 @@ class _MainLayoutState extends State<MainLayout> {
           const HomePage(),
           if (!isDoctor) const FavPage(),
           if (!isDoctor) const AppointmentPage(),
+          if (!isUser) const UserBookingPage(),
           const ProfilePage(),
         ],
       ),
@@ -66,6 +69,11 @@ class _MainLayoutState extends State<MainLayout> {
             const BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.solidCalendarCheck),
               label: 'Appointment',
+            ),
+          if (!isUser)
+            const BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.solidCalendar),
+              label: 'Bookings',
             ),
           const BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.solidUser),

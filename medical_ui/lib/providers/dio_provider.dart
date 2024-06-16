@@ -34,6 +34,32 @@ class DioProvider {
     }
   }
 
+  Future<Map<String, dynamic>?> updateUserProfile(
+      String token, String name, String email) async {
+    try {
+      var response = await Dio().post(
+        'http://127.0.0.1:8000/api/user/profile',
+        data: {
+          'name': name,
+          'email': email,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
+  }
+
   Future<String> registerUser(
       String username, String email, String password) async {
     try {

@@ -21,11 +21,22 @@ class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic> user = {};
   final ImagePicker _picker = ImagePicker();
   XFile? _imageFile;
+  bool _isEditing = false;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = user['name'] ?? '';
+    _emailController.text = user['email'] ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
     user = Provider.of<AuthModel>(context, listen: false).getUser;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: user.isEmpty
           ? const Center(
@@ -58,42 +69,81 @@ class _ProfilePageState extends State<ProfilePage> {
                             },
                           ),
                         ),
+                        const SizedBox(height: 10),
+                        _isEditing
+                            ? TextField(
+                                controller: _nameController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Name',
+                                  border: OutlineInputBorder(),
+                                ),
+                              )
+                            : Text(
+                                user['name'],
+                                style: const TextStyle(
+                                  color: Config.blackColor,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                        const SizedBox(height: 10),
+                        _isEditing
+                            ? TextField(
+                                controller: _emailController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Email',
+                                  border: OutlineInputBorder(),
+                                ),
+                              )
+                            : Text(
+                                user['email'],
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 18,
+                                ),
+                              ),
                         const SizedBox(height: 20),
-                        Text(
-                          user['name'],
-                          style: const TextStyle(
-                            color: Config.blackColor,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          user['email'],
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 18,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        OutlinedButton.icon(
-                          onPressed: () {
-                            // Xử lý sự kiện khi nhấp vào nút Edit Profile
-                          },
-                          icon: const Icon(
-                            Icons.edit,
-                            color: Config.primaryColor,
-                          ),
-                          label: const Text(
-                            'Edit Profile',
-                            style: TextStyle(color: Config.primaryColor),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Config.primaryColor),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            OutlinedButton.icon(
+                              onPressed: _toggleEditSave,
+                              icon: Icon(
+                                _isEditing ? Icons.save : Icons.edit,
+                                color: Config.primaryColor,
+                              ),
+                              label: Text(
+                                _isEditing ? 'Save Profile' : 'Edit Profile',
+                                style: TextStyle(color: Config.primaryColor),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                    color: Config.primaryColor),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
                             ),
-                          ),
+                            if (_isEditing)
+                              OutlinedButton.icon(
+                                onPressed: _exitSave,
+                                icon: const Icon(
+                                  Icons.exit_to_app,
+                                  color: Config.primaryColor,
+                                ),
+                                label: const Text(
+                                  'Exit Save',
+                                  style: TextStyle(color: Config.primaryColor),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                      color: Config.primaryColor),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                         const SizedBox(height: 20),
                         const Expanded(
@@ -122,7 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Center(child: Text('About Me Content')),
                                       Center(
                                         child: MapPage(showControls: false),
-                                      ), // Thay đổi ở đây
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -146,6 +196,58 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
     );
+  }
+
+  void _toggleEditSave() {
+    if (_isEditing) {
+      // Save changes to user map
+      setState(() {
+        user['name'] = _nameController.text;
+        user['email'] = _emailController.text;
+      });
+      _saveProfile();
+    } else {
+      // Load existing data into controllers
+      setState(() {
+        _nameController.text = user['name'];
+        _emailController.text = user['email'];
+        _isEditing = !_isEditing;
+      });
+    }
+  }
+
+  void _exitSave() {
+    if (_isEditing) {
+      setState(() {
+        user['name'] = _nameController.text;
+        user['email'] = _emailController.text;
+        _isEditing = false;
+      });
+      _saveProfile();
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    final token = await _getToken();
+    if (token == null) return;
+
+    try {
+      final response = await DioProvider().updateUserProfile(
+        token,
+        _nameController.text,
+        _emailController.text,
+      );
+
+      if (response != null && response['status'] == 'success') {
+        setState(() {
+          user['name'] = response['user']['name'];
+          user['email'] = response['user']['email'];
+          _isEditing = false; // Exit edit mode after successful save
+        });
+      }
+    } catch (e) {
+      print("Profile update error: $e");
+    }
   }
 
   Future<void> _pickImage() async {
@@ -224,13 +326,10 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(15.0), // Adjust the radius as needed
+            borderRadius: BorderRadius.circular(15.0),
           ),
-          backgroundColor:
-              Colors.transparent, // Make the AlertDialog background transparent
-          contentPadding:
-              EdgeInsets.zero, // Remove default padding around content
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
           content: Container(
             decoration: BoxDecoration(
               color: Colors.white,
