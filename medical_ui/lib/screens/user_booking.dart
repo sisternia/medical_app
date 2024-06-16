@@ -1,33 +1,117 @@
-// user_booking.dart
 import 'package:flutter/material.dart';
+import 'package:medical/providers/dio_provider.dart';
 
-class UserBookingPage extends StatelessWidget {
-  const UserBookingPage({super.key});
+class UserBookingPage extends StatefulWidget {
+  final String docId;
+
+  const UserBookingPage({required this.docId, super.key});
+
+  @override
+  _UserBookingPageState createState() => _UserBookingPageState();
+}
+
+class _UserBookingPageState extends State<UserBookingPage> {
+  List<dynamic> appointments = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAppointments();
+  }
+
+  Future<void> _fetchAppointments() async {
+    var data = await DioProvider().getAppointmentsByDocId(widget.docId);
+    setState(() {
+      appointments = data;
+    });
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'upcoming':
+        return const Color.fromARGB(255, 59, 209, 255);
+      case 'complete':
+        return Colors.green;
+      case 'cancel':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getStatusLabel(String status) {
+    switch (status) {
+      case 'upcoming':
+        return 'UP';
+      case 'complete':
+        return 'CO';
+      case 'cancel':
+        return 'CA';
+      default:
+        return 'NA';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount:
-            10, // Example: number of bookings, you can replace with your dynamic data
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15.0),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 50.0),
+            child: Center(
+              child: Text(
+                'User Bookings',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-            child: ListTile(
-              leading: Icon(Icons.event),
-              title: Text('Booking ${index + 1}'),
-              subtitle: Text('Details about booking ${index + 1}'),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                // Define what happens when a booking is tapped
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: appointments.length,
+              itemBuilder: (context, index) {
+                var appointment = appointments[index];
+                return Container(
+                  margin: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: ListTile(
+                    title: Text(
+                        'Booking on ${appointment['date']}\nAt ${appointment['time']}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Name: ${appointment['user']['name']}'),
+                        Text('Email: ${appointment['user']['email']}'),
+                      ],
+                    ),
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(appointment['status']),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Text(
+                        _getStatusLabel(appointment['status']),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
               },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }

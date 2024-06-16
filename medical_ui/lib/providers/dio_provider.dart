@@ -21,6 +21,28 @@ class DioProvider {
     }
   }
 
+  Future<List<dynamic>> getAppointmentsByDocId(String docId) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      var response = await Dio().get(
+        'http://127.0.0.1:8000/api/appointments/doc/$docId',
+        options: Options(headers: {
+          'Authorization': 'Bearer $token',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        return [];
+      }
+    } catch (error) {
+      return [];
+    }
+  }
+
   Future<dynamic> getUser(String token) async {
     try {
       var user = await Dio().get('http://127.0.0.1:8000/api/user',

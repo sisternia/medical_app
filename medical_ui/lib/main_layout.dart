@@ -1,4 +1,3 @@
-// main_layout.dart
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medical/screens/appointment_page.dart';
@@ -39,7 +38,9 @@ class _MainLayoutState extends State<MainLayout> {
           const HomePage(),
           if (!isDoctor) const FavPage(),
           if (!isDoctor) const AppointmentPage(),
-          if (!isUser) const UserBookingPage(),
+          if (!isUser)
+            UserBookingPage(
+                docId: user['id'].toString()), // Provide the docId here
           const ProfilePage(),
         ],
       ),

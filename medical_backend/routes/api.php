@@ -22,4 +22,5 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/reviews', [DocsController::class, 'store']);
     Route::post('/maps', [MapController::class, 'store'])->name('maps.store');
     Route::get('/maps', [MapController::class, 'index'])->name('maps.index');
+    Route::get('/appointments/doc/{doc_id}', [AppointmentsController::class, 'getAppointmentsByDocId']);
 });

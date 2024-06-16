@@ -34,6 +34,14 @@ class AppointmentsController extends Controller
 
         return $appointment;
     }
+    public function getAppointmentsByDocId($doc_id)
+    {
+        $appointments = Appointments::where('doc_id', $doc_id)
+            ->with('user:id,name,email') // Include the email field in the user relation
+            ->get();
+
+        return response()->json($appointments, 200);
+    }
     public function updateStatus(Request $request, $id)
     {
         $appointment = Appointments::find($id);
