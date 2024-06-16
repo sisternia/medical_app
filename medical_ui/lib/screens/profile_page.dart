@@ -102,7 +102,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   fontSize: 18,
                                 ),
                               ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -145,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
                         const Expanded(
                           child: DefaultTabController(
                             length: 2,
