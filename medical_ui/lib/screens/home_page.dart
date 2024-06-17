@@ -38,6 +38,12 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
+  void _handleStatusChange() {
+    setState(() {
+      doctor = {}; // Clear the doctor data
+    });
+  }
+
   @override
   void setState(fn) {
     if (mounted) {
@@ -149,6 +155,7 @@ class _HomePageState extends State<HomePage> {
                                 ? AppointmentCard(
                                     doctor: doctor,
                                     color: Config.primaryColor,
+                                    onStatusChange: _handleStatusChange,
                                   )
                                 : Container(
                                     width: double.infinity,

@@ -19,8 +19,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/book', [AppointmentsController::class, 'store']);
     Route::get('/appointments', [AppointmentsController::class, 'index']);
     Route::post('/appointments/{id}/status', [AppointmentsController::class, 'updateStatus']);
+    Route::get('/appointments/doc/{doc_id}', [AppointmentsController::class, 'getAppointmentsByDocId']);
     Route::post('/reviews', [DocsController::class, 'store']);
     Route::post('/maps', [MapController::class, 'store'])->name('maps.store');
     Route::get('/maps', [MapController::class, 'index'])->name('maps.index');
-    Route::get('/appointments/doc/{doc_id}', [AppointmentsController::class, 'getAppointmentsByDocId']);
 });

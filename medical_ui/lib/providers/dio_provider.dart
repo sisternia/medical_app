@@ -247,7 +247,7 @@ class DioProvider {
   }
 
   Future<dynamic> updateAppointmentStatus(
-      int id, String status, String token) async {
+      String id, String status, String token) async {
     try {
       var response = await Dio().post(
         'http://127.0.0.1:8000/api/appointments/$id/status',

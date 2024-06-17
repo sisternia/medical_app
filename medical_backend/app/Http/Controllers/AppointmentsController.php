@@ -46,19 +46,31 @@ class AppointmentsController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $appointment = Appointments::find($id);
-        if ($appointment && $appointment->user_id == Auth::user()->id) {
-            $appointment->status = $request->get('status');
-            $appointment->save();
-
-            return response()->json([
-                'success' => 'Appointment status updated successfully!',
-            ], 200);
+        if ($appointment) {
+            if (Auth::check() && Auth::user()->id == $appointment->user_id) {
+                // Authorized user updating their own appointment
+                $appointment->status = $request->get('status');
+                $appointment->save();
+    
+                return response()->json([
+                    'success' => 'Appointment status updated successfully!',
+                ], 200);
+            } else {
+                // General update (e.g., by admin or doctor)
+                $appointment->status = $request->get('status');
+                $appointment->save();
+    
+                return response()->json([
+                    'success' => 'Appointment status updated successfully!',
+                ], 200);
+            }
         } else {
             return response()->json([
                 'error' => 'Appointment not found or unauthorized',
             ], 404);
         }
     }
+    
 
 
     /**

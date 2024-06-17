@@ -12,14 +12,14 @@ class AppointmentPage extends StatefulWidget {
   State<AppointmentPage> createState() => _AppointmentPageState();
 }
 
-enum FilterStatus { upcoming, complete, cancel }
+enum FilterStatus { upcoming, complete, cancel, confirm }
 
 class _AppointmentPageState extends State<AppointmentPage> {
-  FilterStatus status = FilterStatus.upcoming; //initial status
+  FilterStatus status = FilterStatus.upcoming; // initial status
   Alignment _alignment = Alignment.centerLeft;
   List<dynamic> schedules = [];
 
-  //get appointments details
+  // get appointments details
   Future<void> getAppointments() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
@@ -45,6 +45,66 @@ class _AppointmentPageState extends State<AppointmentPage> {
     }
   }
 
+  Color _getStatusColor(FilterStatus status) {
+    switch (status) {
+      case FilterStatus.upcoming:
+        return const Color.fromARGB(255, 59, 209, 255);
+      case FilterStatus.complete:
+        return Colors.green;
+      case FilterStatus.cancel:
+        return Colors.red;
+      case FilterStatus.confirm:
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getStatusLabel(FilterStatus status) {
+    switch (status) {
+      case FilterStatus.upcoming:
+        return 'UP';
+      case FilterStatus.complete:
+        return 'CO';
+      case FilterStatus.cancel:
+        return 'CA';
+      case FilterStatus.confirm:
+        return 'CF';
+      default:
+        return 'NA';
+    }
+  }
+
+  String _getFullStatusLabel(FilterStatus status) {
+    switch (status) {
+      case FilterStatus.upcoming:
+        return 'UPCOMING';
+      case FilterStatus.complete:
+        return 'COMPLETE';
+      case FilterStatus.cancel:
+        return 'CANCEL';
+      case FilterStatus.confirm:
+        return 'CONFIRM';
+      default:
+        return 'NA';
+    }
+  }
+
+  Alignment _getAlignment(FilterStatus status) {
+    switch (status) {
+      case FilterStatus.upcoming:
+        return Alignment(-1.0, 0);
+      case FilterStatus.complete:
+        return Alignment(-0.33, 0);
+      case FilterStatus.cancel:
+        return Alignment(0.33, 0);
+      case FilterStatus.confirm:
+        return Alignment(1.0, 0);
+      default:
+        return Alignment.centerLeft;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     List<dynamic> filteredSchedules = schedules.where((var schedule) {
@@ -57,6 +117,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
           break;
         case 'cancel':
           schedule['status'] = FilterStatus.cancel;
+          break;
+        case 'confirm':
+          schedule['status'] = FilterStatus.confirm;
           break;
       }
       return schedule['status'] == status;
@@ -90,22 +153,19 @@ class _AppointmentPageState extends State<AppointmentPage> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                if (filterStatus == FilterStatus.upcoming) {
-                                  status = FilterStatus.upcoming;
-                                  _alignment = Alignment.centerLeft;
-                                } else if (filterStatus ==
-                                    FilterStatus.complete) {
-                                  status = FilterStatus.complete;
-                                  _alignment = Alignment.center;
-                                } else if (filterStatus ==
-                                    FilterStatus.cancel) {
-                                  status = FilterStatus.cancel;
-                                  _alignment = Alignment.centerRight;
-                                }
+                                status = filterStatus;
+                                _alignment = _getAlignment(filterStatus);
                               });
                             },
                             child: Center(
-                              child: Text(filterStatus.name),
+                              child: Text(
+                                status == filterStatus
+                                    ? _getFullStatusLabel(filterStatus)
+                                    : _getStatusLabel(filterStatus),
+                                style: TextStyle(
+                                  color: _getStatusColor(filterStatus),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -116,15 +176,15 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   alignment: _alignment,
                   duration: const Duration(milliseconds: 200),
                   child: Container(
-                    width: 100,
+                    width: 80,
                     height: 40,
                     decoration: BoxDecoration(
                       color: Config.primaryColor,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
                       child: Text(
-                        status.name,
+                        _getFullStatusLabel(status),
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -156,8 +216,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(
-                            15.0), // Adjust the radius as needed
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(15),
@@ -196,6 +255,24 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                     ),
                                   ],
                                 ),
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 4.0),
+                                  decoration: BoxDecoration(
+                                    color: _getStatusColor(
+                                        schedule['status'] as FilterStatus),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Text(
+                                    _getStatusLabel(
+                                        schedule['status'] as FilterStatus),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(
@@ -206,47 +283,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
                               day: schedule['day'],
                               time: schedule['time'],
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton(
-                                    onPressed: () {},
-                                    style: OutlinedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      'Cancel',
-                                      style:
-                                          TextStyle(color: Config.primaryColor),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Expanded(
-                                  child: OutlinedButton(
-                                    style: OutlinedButton.styleFrom(
-                                      backgroundColor: Config.primaryColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    onPressed: () {},
-                                    child: const Text(
-                                      'Reschedule',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
                           ],
                         ),
                       ),
@@ -310,7 +346,7 @@ class ScheduleCard extends StatelessWidget {
             style: const TextStyle(
               color: Config.primaryColor,
             ),
-          ))
+          )),
         ],
       ),
     );

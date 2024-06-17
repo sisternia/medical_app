@@ -6,16 +6,114 @@ import 'package:medical/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppointmentCard extends StatefulWidget {
-  const AppointmentCard({super.key, required this.doctor, required this.color});
+  const AppointmentCard({
+    super.key,
+    required this.doctor,
+    required this.color,
+    required this.onStatusChange,
+  });
 
   final Map<String, dynamic> doctor;
   final Color color;
+  final VoidCallback onStatusChange;
 
   @override
   State<AppointmentCard> createState() => _AppointmentCardState();
 }
 
 class _AppointmentCardState extends State<AppointmentCard> {
+  void _showCancelConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Center(
+                    child: Text(
+                      'Confirm Cancellation',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: TextButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            final token = prefs.getString('token') ?? '';
+
+                            final String appointmentId =
+                                widget.doctor['appointments']['id'].toString();
+
+                            final response = await DioProvider()
+                                .updateAppointmentStatus(
+                                    appointmentId, 'cancel', token);
+
+                            if (response == 200) {
+                              setState(() {
+                                widget.doctor['appointments']['status'] =
+                                    'cancel';
+                              });
+                              widget
+                                  .onStatusChange(); // Call the callback function
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Failed to cancel the appointment')));
+                            }
+                          },
+                          child: const Text('Yes'),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: TextButton(
+                          onPressed: () =>
+                              Navigator.of(context).pop(), // Close the dialog
+                          child: const Text('No'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -81,28 +179,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                           color: Colors.white,
                         ),
                       ),
-                      onPressed: () async {
-                        final SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        final token = prefs.getString('token') ?? '';
-
-                        final response = await DioProvider()
-                            .updateAppointmentStatus(
-                                widget.doctor['appointments']['id'],
-                                'cancel',
-                                token);
-
-                        if (response == 200) {
-                          setState(() {
-                            widget.doctor['appointments']['status'] = 'cancel';
-                          });
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'Failed to cancel the appointment')));
-                        }
-                      },
+                      onPressed: _showCancelConfirmationDialog,
                     ),
                   ),
                   const SizedBox(
@@ -117,7 +194,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         ),
                       ),
                       child: const Text(
-                        'Completed',
+                        'Review',
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -143,8 +220,10 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                   fontSize: 15,
                                 ),
                               ),
-                              image: const FlutterLogo(
-                                size: 100,
+                              image: Image.asset(
+                                'assets/images/Logo.png',
+                                width: 100,
+                                height: 100,
                               ),
                               submitButtonText: 'Submit',
                               commentHint: 'Your Reviews',
@@ -161,6 +240,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                     token);
 
                                 if (rating == 200 && rating != '') {
+                                  widget
+                                      .onStatusChange(); // Call the callback function
                                   MyApp.navigatorKey.currentState!
                                       .pushNamed('main');
                                 }
