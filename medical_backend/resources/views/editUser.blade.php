@@ -225,15 +225,6 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
                             </p>
                         </a>
                     </li>
-
-
-
-
-
-
-
-
-
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
@@ -300,24 +291,17 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
                             </form>
                         </div>
                         <!-- /.card -->
-
                         <!-- general form elements -->
-
                         <!-- /.card -->
-
                         <!-- Input addon -->
-
                         <!-- /.card -->
                         <!-- Horizontal Form -->
-
                         <!-- /.card -->
-
                     </div>
                     <!--/.col (left) -->
                     <!-- right column -->
                     <div class="col-md-6">
                         <!-- Form Element sizes -->
-
                     </div>
                     <!--/.col (right) -->
                 </div>

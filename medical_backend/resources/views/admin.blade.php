@@ -154,15 +154,6 @@
                             </p>
                         </a>
                     </li>
-
-
-
-
-
-
-
-
-
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
@@ -200,7 +191,6 @@
                         <div class="small-box bg-info">
                             <div class="inner">
                                 <h3>150</h3>
-
                                 <p>Số lượng bác sĩ</p>
                             </div>
                             <div class="icon">
@@ -215,7 +205,6 @@
                         <div class="small-box bg-success">
                             <div class="inner">
                                 <h3>53<sup style="font-size: 20px"></sup></h3>
-
                                 <p>Số lượng bệnh nhân</p>
                             </div>
                             <div class="icon">
@@ -230,7 +219,6 @@
                         <div class="small-box bg-warning">
                             <div class="inner">
                                 <h3>44</h3>
-
                                 <p>Tổng số tài khoản</p>
                             </div>
                             <div class="icon">
@@ -240,7 +228,6 @@
                         </div>
                     </div>
                     <!-- ./col -->
-
                     <!-- ./col -->
                 </div>
                 <!-- /.row -->
@@ -249,31 +236,20 @@
                     <!-- Left col -->
                     <section class="col-lg-7 connectedSortable">
                         <!-- Custom tabs (Charts with tabs)-->
-
                         <!-- /.card -->
-
                         <!-- DIRECT CHAT -->
-
                         <!--/.direct-chat -->
-
                         <!-- TO DO List -->
-
                         <!-- /.card -->
                     </section>
                     <!-- /.Left col -->
                     <!-- right col (We are only adding the ID to make the widgets sortable)-->
                     <section class="col-lg-5 connectedSortable">
-
                         <!-- Map card -->
-
                         <!-- /.card -->
-
                         <!-- solid sales graph -->
-
                         <!-- /.card -->
-
                         <!-- Calendar -->
-
                         <!-- /.card -->
                     </section>
                     <!-- right col -->
