@@ -34,11 +34,14 @@ class DioProvider {
       );
 
       if (response.statusCode == 200) {
+        print(response.data); // In phản hồi từ API
         return response.data;
       } else {
+        print('Error: ${response.statusCode}');
         return [];
       }
     } catch (error) {
+      print('Error: $error');
       return [];
     }
   }

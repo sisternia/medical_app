@@ -21,6 +21,7 @@ class _UserBookingPageState extends State<UserBookingPage> {
 
   Future<void> _fetchAppointments() async {
     var data = await DioProvider().getAppointmentsByDocId(widget.docId);
+    print(data); // In phản hồi từ API
     setState(() {
       appointments = data;
     });
@@ -71,45 +72,47 @@ class _UserBookingPageState extends State<UserBookingPage> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: appointments.length,
-              itemBuilder: (context, index) {
-                var appointment = appointments[index];
-                return Container(
-                  margin: const EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: ListTile(
-                    title: Text(
-                        'Booking on ${appointment['date']}\nAt ${appointment['time']}'),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Name: ${appointment['user']['name']}'),
-                        Text('Email: ${appointment['user']['email']}'),
-                      ],
-                    ),
-                    trailing: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 4.0),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(appointment['status']),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Text(
-                        _getStatusLabel(appointment['status']),
-                        style: TextStyle(
+            child: appointments.isEmpty
+                ? Center(child: Text('No appointments found'))
+                : ListView.builder(
+                    itemCount: appointments.length,
+                    itemBuilder: (context, index) {
+                      var appointment = appointments[index];
+                      return Container(
+                        margin: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          borderRadius: BorderRadius.circular(15.0),
                         ),
-                      ),
-                    ),
+                        child: ListTile(
+                          title: Text(
+                              'Booking on ${appointment['date']}\nAt ${appointment['time']}'),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Name: ${appointment['user']['name']}'),
+                              Text('Email: ${appointment['user']['email']}'),
+                            ],
+                          ),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 4.0),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(appointment['status']),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Text(
+                              _getStatusLabel(appointment['status']),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),

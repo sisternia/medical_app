@@ -226,7 +226,7 @@ class DetailBody extends StatelessWidget {
           ),
           Config.spaceSmall,
           Text(
-            "Dr ${doctor['doctor_name']} có kinh nghiệm ${doctor['experience']} năm là ${doctor['experience']} địa chỉ $locationText",
+            "Dr ${doctor['doctor_name']} có kinh nghiệm ${doctor['experience']} năm là ${doctor['category']} địa chỉ $locationText",
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               height: 1.5,

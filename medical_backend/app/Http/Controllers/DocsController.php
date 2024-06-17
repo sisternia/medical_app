@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointments;
 use App\Models\Reviews;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,7 @@ class DocsController extends Controller
         $doctor = Auth::user();
         $appointments = Appointments::where('doc_id', $doctor->id)->where('status', 'upcoming')->get();
         $reviews = Reviews::where('doc_id', $doctor->id)->where('status', 'active')->get();
-    
+
         return view('dashboard')->with(['doctor'=>$doctor, 'appointments'=>$appointments, 'reviews'=>$reviews]);
     }
 
@@ -38,7 +39,7 @@ class DocsController extends Controller
         $reviews = new Reviews();
 
         $appointment = Appointments::where('id', $request->get('appointment_id'))->first();
-    
+
         $reviews->user_id = Auth::user()->id;
         $reviews->doc_id = $request->get('doctor_id');
         $reviews->ratings = $request->get('ratings');
@@ -46,10 +47,10 @@ class DocsController extends Controller
         $reviews->reviewed_by = Auth::user()->name;
         $reviews->status = 'active';
         $reviews->save();
-    
+
         $appointment->status = 'complete';
         $appointment->save();
-    
+
         return response()->json([
             'success'=>'The appointment has been completed and reviewed successfully!',
         ], 200);
@@ -76,7 +77,13 @@ class DocsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $doctor=User::with('doctor')->where('doc_id',$id);
+         $name=$request->input('name');
+        $experience=$request->input('experience');
+        $bio=$request->input('bio_data');
+
+
+
     }
 
     /**

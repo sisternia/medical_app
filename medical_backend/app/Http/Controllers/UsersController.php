@@ -71,19 +71,19 @@ class UsersController extends Controller
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
-    
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
         ]);
-    
+
         $user->name = $validatedData['name'];
         $user->email = $validatedData['email'];
         $user->save();
-    
+
         return response()->json(['status' => 'success', 'user' => $user], 200);
     }
-    
+
         /**
      * Store a newly created resource in storage.
      */
@@ -147,7 +147,7 @@ class UsersController extends Controller
             'user_id'=>$user->id,
             'status'=>'active',
         ]);
-        
+
         // Create a new map entry
         Map::create([
             'user_id' => $user->id,
@@ -157,7 +157,7 @@ class UsersController extends Controller
             'latitude' => 0.0000000, // Default latitude
             'doctor_id' => null,
         ]);
-        
+
         return $user;
     }
 
@@ -220,4 +220,78 @@ class UsersController extends Controller
     {
         //
     }
+
+
+    public function userManagement()
+    {
+        $users = array(); //this will return a set of user and doctor data
+        $listUser = User::with('user_details')->where('type', 'user')->get();
+
+
+
+
+
+
+        return view('userList',compact('listUser'));
+    }
+    public function doctorManagement()
+    {
+        $users = array(); //this will return a set of user and doctor data
+        $listUser = User::with('doctor')->where('type', 'doctor')->get();
+
+
+
+        return view('userList',compact('listUser'));
+    }
+
+
+    public function changeUserInfor(Request $request,$id)
+    {
+        $user = User::find($id);
+
+
+
+
+        $user->name = $request->input('name') ;
+        $user->email = $request->input('email');
+    //  $user->user_details->bio_data=$request->input('bio');
+
+
+        $user->save();
+        // $user->user_details->save();
+        $listUser = User::with('user_details')->where('type', 'user')->get();
+        return view('userList',compact('listUser'));
+
+    }
+
+    public function returnViewUserEdit(Request $request,$id)
+    {
+        $user = User::find($id);
+        $user_details=$user->user_details;
+
+
+
+
+
+
+        return view('editUser',compact(['user','user_details']));
+
+        return response()->json(['status' => 'success', 'user' => $user,'user_details'=>$user_details], 200);
+    }
+
+    public function adminDeleteUser(Request $request,$id)
+    {
+        $user = User::find($id);
+        $user->delete();
+
+
+
+
+
+        
+
+        $listUser = User::with('user_details')->where('type', 'user')->get();
+        return view('userList',compact('listUser'));    
+    }
+
 }
