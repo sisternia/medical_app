@@ -264,4 +264,64 @@ class DioProvider {
       return error;
     }
   }
+
+  Future<List<dynamic>> fetchReviewsByDoctorId(int docId) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      var response = await Dio().get(
+        'http://127.0.0.1:8000/api/reviews/doc/$docId',
+        options: Options(headers: {
+          'Authorization': 'Bearer $token',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return List<dynamic>.from(response.data);
+      } else {
+        print('Error: ${response.statusCode}');
+        return [];
+      }
+    } catch (error) {
+      print('Error: $error');
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserBio(String token) async {
+    try {
+      var response = await Dio().get(
+        'http://127.0.0.1:8000/api/user/bio',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> updateUserBio(
+      String token, String bioData) async {
+    try {
+      var response = await Dio().post(
+        'http://127.0.0.1:8000/api/user/bio',
+        data: {'bio_data': bioData},
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
+  }
 }

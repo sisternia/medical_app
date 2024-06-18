@@ -56,6 +56,11 @@ class DocsController extends Controller
         ], 200);
     }
 
+    public function getReviewsByDocId($doc_id) {
+        $reviews = Reviews::where('doc_id', $doc_id)->get();
+        return response()->json($reviews, 200);
+    }
+
     /**
      * Display the specified resource.
      */

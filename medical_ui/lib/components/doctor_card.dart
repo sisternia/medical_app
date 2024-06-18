@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:medical/main.dart';
+import 'package:medical/providers/dio_provider.dart';
 import 'package:medical/screens/doctor_details.dart';
 import 'package:medical/utils/config.dart';
 
 class DoctorCard extends StatefulWidget {
   const DoctorCard({
-    super.key,
+    Key? key,
     required this.doctor,
     required this.isFav,
     this.isFavPage = false,
-  });
+  }) : super(key: key);
 
   final Map<String, dynamic> doctor;
   final bool isFav;
@@ -20,6 +21,35 @@ class DoctorCard extends StatefulWidget {
 }
 
 class _DoctorCardState extends State<DoctorCard> {
+  double averageRating = 0.0;
+  int reviewCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetchAverageRatingAndReviewCount();
+  }
+
+  Future<void> fetchAverageRatingAndReviewCount() async {
+    try {
+      List<dynamic> reviews =
+          await DioProvider().fetchReviewsByDoctorId(widget.doctor['id']);
+      if (reviews.isNotEmpty) {
+        double totalRatings = 0.0;
+        for (var review in reviews) {
+          totalRatings += review['ratings'];
+        }
+        setState(() {
+          averageRating = totalRatings / reviews.length;
+          reviewCount = reviews.length;
+        });
+      }
+    } catch (error) {
+      print('Error fetching average rating: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -80,7 +110,7 @@ class _DoctorCardState extends State<DoctorCard> {
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              const Row(
+                              Row(
                                 children: [
                                   Icon(
                                     Icons.star,
@@ -88,11 +118,12 @@ class _DoctorCardState extends State<DoctorCard> {
                                     size: 16,
                                   ),
                                   SizedBox(width: 5),
-                                  Text('4.5'),
+                                  Text(averageRating.toStringAsFixed(
+                                      1)), // Hiển thị trung bình ratings
                                   SizedBox(width: 5),
                                   Text('Reviews'),
                                   SizedBox(width: 5),
-                                  Text('(20)'),
+                                  Text('($reviewCount)'), // Số lượng reviews
                                 ],
                               ),
                             ],
@@ -140,20 +171,20 @@ class _DoctorCardState extends State<DoctorCard> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const Icon(
+                      Icon(
                         Icons.star_border,
                         color: Colors.yellow,
                         size: 16,
                       ),
                       const SizedBox(height: 5),
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text('4.5'),
+                          Text(averageRating.toStringAsFixed(1)),
                           SizedBox(width: 5),
                           Text('Reviews'),
                           SizedBox(width: 5),
-                          Text('(20)'),
+                          Text('($reviewCount)'),
                         ],
                       ),
                     ],

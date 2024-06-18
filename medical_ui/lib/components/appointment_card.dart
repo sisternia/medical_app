@@ -98,8 +98,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         child: TextButton(
-                          onPressed: () =>
-                              Navigator.of(context).pop(), // Close the dialog
+                          onPressed: () => Navigator.of(context).pop(),
                           child: const Text('No'),
                         ),
                       ),

@@ -161,6 +161,41 @@ class UsersController extends Controller
         return $user;
     }
 
+    public function getUserBio(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->type === 'doctor') {
+            $bio = Doctor::where('doc_id', $user->id)->value('bio_data');
+        } else {
+            $bio = UserDetails::where('user_id', $user->id)->value('bio_data');
+        }
+
+        return response()->json(['bio_data' => $bio]);
+    }
+
+    public function updateUserBio(Request $request)
+    {
+        $user = $request->user();
+        $bioData = $request->input('bio_data');
+
+        if ($user->type === 'doctor') {
+            $doctor = Doctor::where('doc_id', $user->id)->first();
+            if ($doctor) {
+                $doctor->bio_data = $bioData;
+                $doctor->save();
+            }
+        } else {
+            $userDetail = UserDetails::where('user_id', $user->id)->first();
+            if ($userDetail) {
+                $userDetail->bio_data = $bioData;
+                $userDetail->save();
+            }
+        }
+
+        return response()->json(['status' => 'success']);
+    }
+
     /**
     * Logout.
     */

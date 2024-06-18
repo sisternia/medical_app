@@ -16,11 +16,14 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/logout', [UsersController::class, 'logout']);
     Route::post('/user/profile', [UsersController::class, 'updateProfile']);
     Route::post('/user/profile-photo', [UsersController::class, 'updateProfilePhoto']);
+    Route::get('/user/bio', [UsersController::class, 'getUserBio']);
+    Route::post('/user/bio', [UsersController::class, 'updateUserBio']);
     Route::post('/book', [AppointmentsController::class, 'store']);
     Route::get('/appointments', [AppointmentsController::class, 'index']);
     Route::post('/appointments/{id}/status', [AppointmentsController::class, 'updateStatus']);
     Route::get('/appointments/doc/{doc_id}', [AppointmentsController::class, 'getAppointmentsByDocId']);
     Route::post('/reviews', [DocsController::class, 'store']);
+    Route::get('/reviews/doc/{doc_id}', [DocsController::class, 'getReviewsByDocId']);
     Route::post('/maps', [MapController::class, 'store'])->name('maps.store');
     Route::get('/maps', [MapController::class, 'index'])->name('maps.index');
 });

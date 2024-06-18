@@ -24,12 +24,30 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isEditing = false;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  String _bioData = '';
 
   @override
   void initState() {
     super.initState();
     _nameController.text = user['name'] ?? '';
     _emailController.text = user['email'] ?? '';
+    _fetchBioData();
+  }
+
+  Future<void> _fetchBioData() async {
+    final token = await _getToken();
+    if (token == null) return;
+
+    try {
+      final response = await DioProvider().getUserBio(token);
+      if (response != null && response['bio_data'] != null) {
+        setState(() {
+          _bioData = response['bio_data'];
+        });
+      }
+    } catch (e) {
+      print("Fetch bio data error: $e");
+    }
   }
 
   @override
@@ -146,12 +164,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        const Expanded(
+                        Expanded(
                           child: DefaultTabController(
                             length: 2,
                             child: Column(
                               children: <Widget>[
-                                TabBar(
+                                const TabBar(
                                   tabs: [
                                     Tab(
                                       icon: FaIcon(FontAwesomeIcons.infoCircle),
@@ -169,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Expanded(
                                   child: TabBarView(
                                     children: <Widget>[
-                                      Center(child: Text('About Me Content')),
+                                      Center(child: Text(_bioData)),
                                       Center(
                                         child: MapPage(showControls: false),
                                       ),
@@ -220,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_isEditing) {
       setState(() {
         user['name'] = _nameController.text;
-        user['email'] = _emailController.text;
+        user['email'] = _nameController.text;
         _isEditing = false;
       });
       _saveProfile();
