@@ -30,7 +30,7 @@ class _SignUpFormState extends State<SignUpForm> {
         children: <Widget>[
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: TextFormField(
               controller: _nameController,
               keyboardType: TextInputType.text,
@@ -53,7 +53,7 @@ class _SignUpFormState extends State<SignUpForm> {
           Config.spaceSmall,
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -87,7 +87,7 @@ class _SignUpFormState extends State<SignUpForm> {
           Config.spaceSmall,
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: TextFormField(
               controller: _passController,
               keyboardType: TextInputType.visiblePassword,

@@ -24,6 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isEditing = false;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
   String _bioData = '';
 
   @override
@@ -43,6 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (response != null && response['bio_data'] != null) {
         setState(() {
           _bioData = response['bio_data'];
+          _bioController.text = _bioData;
         });
       }
     } catch (e) {
@@ -54,7 +56,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     user = Provider.of<AuthModel>(context, listen: false).getUser;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: user.isEmpty
           ? const Center(
@@ -63,75 +64,94 @@ class _ProfilePageState extends State<ProfilePage> {
           : SafeArea(
               child: Stack(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 15,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        const SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: _pickImage,
-                          child: CircleAvatar(
-                            radius: 60,
-                            backgroundImage: _imageFile == null
-                                ? NetworkImage(
-                                    "http://127.0.0.1:8000/storage/${user['profile_photo_path']}")
-                                : FileImage(File(_imageFile!.path))
-                                    as ImageProvider,
-                            onBackgroundImageError: (_, __) {
-                              setState(() {
-                                _imageFile = null;
-                              });
-                            },
-                          ),
+                  Column(
+                    children: [
+                      const SizedBox(height: 15),
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundImage: _imageFile == null
+                              ? NetworkImage(
+                                  "http://127.0.0.1:8000/storage/${user['profile_photo_path']}")
+                              : FileImage(File(_imageFile!.path))
+                                  as ImageProvider,
+                          onBackgroundImageError: (_, __) {
+                            setState(() {
+                              _imageFile = null;
+                            });
+                          },
                         ),
-                        const SizedBox(height: 10),
-                        _isEditing
-                            ? TextField(
+                      ),
+                      const SizedBox(height: 5),
+                      _isEditing
+                          ? Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextField(
                                 controller: _nameController,
                                 decoration: const InputDecoration(
                                   labelText: 'Name',
                                   border: OutlineInputBorder(),
                                 ),
-                              )
-                            : Text(
-                                user['name'],
-                                style: const TextStyle(
-                                  color: Config.blackColor,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
                               ),
-                        const SizedBox(height: 10),
-                        _isEditing
-                            ? TextField(
+                            )
+                          : Text(
+                              user['name'],
+                              style: const TextStyle(
+                                color: Config.blackColor,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                      const SizedBox(height: 5),
+                      _isEditing
+                          ? Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextField(
                                 controller: _emailController,
                                 decoration: const InputDecoration(
                                   labelText: 'Email',
                                   border: OutlineInputBorder(),
                                 ),
-                              )
-                            : Text(
-                                user['email'],
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 18,
-                                ),
                               ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
+                            )
+                          : Text(
+                              user['email'],
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 18,
+                              ),
+                            ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: _toggleEditSave,
+                            icon: Icon(
+                              _isEditing ? Icons.save : Icons.edit,
+                              color: Config.primaryColor,
+                            ),
+                            label: Text(
+                              _isEditing ? 'Save Profile' : 'Edit Profile',
+                              style: TextStyle(color: Config.primaryColor),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side:
+                                  const BorderSide(color: Config.primaryColor),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          if (_isEditing)
                             OutlinedButton.icon(
-                              onPressed: _toggleEditSave,
-                              icon: Icon(
-                                _isEditing ? Icons.save : Icons.edit,
+                              onPressed: _exitSave,
+                              icon: const Icon(
+                                Icons.exit_to_app,
                                 color: Config.primaryColor,
                               ),
-                              label: Text(
-                                _isEditing ? 'Save Profile' : 'Edit Profile',
+                              label: const Text(
+                                'Exit Save',
                                 style: TextStyle(color: Config.primaryColor),
                               ),
                               style: OutlinedButton.styleFrom(
@@ -142,64 +162,72 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                             ),
-                            if (_isEditing)
-                              OutlinedButton.icon(
-                                onPressed: _exitSave,
-                                icon: const Icon(
-                                  Icons.exit_to_app,
-                                  color: Config.primaryColor,
-                                ),
-                                label: const Text(
-                                  'Exit Save',
-                                  style: TextStyle(color: Config.primaryColor),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                      color: Config.primaryColor),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Expanded(
+                        child: DefaultTabController(
+                          length: 2,
+                          child: Column(
+                            children: <Widget>[
+                              const TabBar(
+                                tabs: [
+                                  Tab(
+                                    icon: FaIcon(FontAwesomeIcons.infoCircle),
                                   ),
-                                ),
+                                  Tab(
+                                    icon: FaIcon(FontAwesomeIcons.mapMarkerAlt),
+                                  ),
+                                ],
+                                labelColor: Config.primaryColor,
+                                unselectedLabelColor: Colors.grey,
                               ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Expanded(
-                          child: DefaultTabController(
-                            length: 2,
-                            child: Column(
-                              children: <Widget>[
-                                const TabBar(
-                                  tabs: [
-                                    Tab(
-                                      icon: FaIcon(FontAwesomeIcons.infoCircle),
-                                      text: 'About Me',
-                                    ),
-                                    Tab(
-                                      icon:
-                                          FaIcon(FontAwesomeIcons.mapMarkerAlt),
-                                      text: 'Location',
+                              Expanded(
+                                child: TabBarView(
+                                  children: <Widget>[
+                                    _isEditing
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: SingleChildScrollView(
+                                              child: ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  maxHeight:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .height,
+                                                ),
+                                                child: TextField(
+                                                  controller: _bioController,
+                                                  maxLines: null,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    labelText: 'Bio',
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Center(
+                                              child: SingleChildScrollView(
+                                                child: Text(_bioData),
+                                              ),
+                                            ),
+                                          ),
+                                    Center(
+                                      child: MapPage(showControls: false),
                                     ),
                                   ],
-                                  labelColor: Config.primaryColor,
-                                  unselectedLabelColor: Colors.grey,
                                 ),
-                                Expanded(
-                                  child: TabBarView(
-                                    children: <Widget>[
-                                      Center(child: Text(_bioData)),
-                                      Center(
-                                        child: MapPage(showControls: false),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   Positioned(
                     top: 10,
@@ -222,6 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         user['name'] = _nameController.text;
         user['email'] = _emailController.text;
+        _bioData = _bioController.text;
       });
       _saveProfile();
     } else {
@@ -229,6 +258,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _nameController.text = user['name'];
         _emailController.text = user['email'];
+        _bioController.text = _bioData;
         _isEditing = !_isEditing;
       });
     }
@@ -238,7 +268,8 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_isEditing) {
       setState(() {
         user['name'] = _nameController.text;
-        user['email'] = _nameController.text;
+        user['email'] = _emailController.text;
+        _bioController.text = _bioData;
         _isEditing = false;
       });
       _saveProfile();
@@ -256,11 +287,17 @@ class _ProfilePageState extends State<ProfilePage> {
         _emailController.text,
       );
 
+      final bioResponse = await DioProvider().updateUserBio(
+        token,
+        _bioController.text,
+      );
+
       if (response != null && response['status'] == 'success') {
         setState(() {
           user['name'] = response['user']['name'];
           user['email'] = response['user']['email'];
-          _isEditing = false; // Exit edit mode after successful save
+          _bioData = _bioController.text;
+          _isEditing = false;
         });
       }
     } catch (e) {

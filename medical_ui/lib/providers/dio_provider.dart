@@ -21,31 +21,6 @@ class DioProvider {
     }
   }
 
-  Future<List<dynamic>> getAppointmentsByDocId(String docId) async {
-    try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-
-      var response = await Dio().get(
-        'http://127.0.0.1:8000/api/appointments/doc/$docId',
-        options: Options(headers: {
-          'Authorization': 'Bearer $token',
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        print(response.data); // In phản hồi từ API
-        return response.data;
-      } else {
-        print('Error: ${response.statusCode}');
-        return [];
-      }
-    } catch (error) {
-      print('Error: $error');
-      return [];
-    }
-  }
-
   Future<dynamic> getUser(String token) async {
     try {
       var user = await Dio().get('http://127.0.0.1:8000/api/user',
@@ -98,6 +73,46 @@ class DioProvider {
       }
     } catch (error) {
       return 'Email has already been taken';
+    }
+  }
+
+  Future<dynamic> logout(String token) async {
+    try {
+      var response = await Dio().post('http://127.0.0.1:8000/api/logout',
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
+
+      if (response.statusCode == 200 && response.data != '') {
+        return response.statusCode;
+      } else {
+        return 'Error';
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+
+  Future<List<dynamic>> getAppointmentsByDocId(String docId) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      var response = await Dio().get(
+        'http://127.0.0.1:8000/api/appointments/doc/$docId',
+        options: Options(headers: {
+          'Authorization': 'Bearer $token',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print(response.data); // In phản hồi từ API
+        return response.data;
+      } else {
+        print('Error: ${response.statusCode}');
+        return [];
+      }
+    } catch (error) {
+      print('Error: $error');
+      return [];
     }
   }
 
@@ -161,21 +176,6 @@ class DioProvider {
           data: {
             'favList': favList,
           },
-          options: Options(headers: {'Authorization': 'Bearer $token'}));
-
-      if (response.statusCode == 200 && response.data != '') {
-        return response.statusCode;
-      } else {
-        return 'Error';
-      }
-    } catch (error) {
-      return error;
-    }
-  }
-
-  Future<dynamic> logout(String token) async {
-    try {
-      var response = await Dio().post('http://127.0.0.1:8000/api/logout',
           options: Options(headers: {'Authorization': 'Bearer $token'}));
 
       if (response.statusCode == 200 && response.data != '') {

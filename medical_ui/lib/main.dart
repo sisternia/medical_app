@@ -1,5 +1,5 @@
-// main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:medical/main_layout.dart';
 import 'package:medical/models/auth_model.dart';
 import 'package:medical/screens/auth_page.dart';
@@ -9,6 +9,9 @@ import 'package:medical/utils/config.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom]);
   runApp(const MyApp());
 }
 

@@ -32,7 +32,7 @@ class _LoginFormState extends State<LoginForm> {
         children: <Widget>[
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -56,7 +56,7 @@ class _LoginFormState extends State<LoginForm> {
           Config.spaceSmall,
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: TextFormField(
               controller: _passController,
               keyboardType: TextInputType.visiblePassword,

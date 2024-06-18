@@ -43,11 +43,18 @@ class _MapViewState extends State<MapView> {
   void initState() {
     super.initState();
     _mapController = MapController();
-    // DioProvider().fetchLocationData().then((data) {
-    //   setState(() {
-    //     locationData = data;
-    //   });
-    // });
+    _fetchLocationData();
+  }
+
+  Future<void> _fetchLocationData() async {
+    try {
+      List<Map<String, dynamic>> data = await DioProvider().fetchLocationData();
+      setState(() {
+        locationData = data;
+      });
+    } catch (e) {
+      print('Failed to fetch location data: $e');
+    }
   }
 
   Future<void> _getPlaceSuggestions(String query) async {
@@ -158,6 +165,22 @@ class _MapViewState extends State<MapView> {
                     'pk.eyJ1IjoibWljaGFlbG11a3UiLCJhIjoiY2x2dXlxcTFpMGV1ZzJrbjY3bGM3enY1cyJ9.j88Kmiz1HFReLxsEuGRyWQ',
                 'id': 'mapbox.mapbox-streets-v7'
               },
+            ),
+            MarkerLayer(
+              markers: locationData.map((location) {
+                final latLng =
+                    LatLng(location['latitude'], location['longitude']);
+                return Marker(
+                  width: 80.0,
+                  height: 80.0,
+                  point: latLng,
+                  child: const Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                    size: 40.0,
+                  ),
+                );
+              }).toList(),
             ),
             if (_markerPosition != null)
               MarkerLayer(
