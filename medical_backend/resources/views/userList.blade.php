@@ -196,7 +196,7 @@
 
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="./index.html" class="nav-link active">
+                                    <a href="/admin" class="nav-link active">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Dashboard</p>
                                     </a>
@@ -319,7 +319,7 @@
                                             </a>
                                         </td>
                                         <td class="project-state">
-                                            <span class="badge badge-success">
+                                            <span id="statusButton" class="badge badge-success" onclick="ChangeStatus({{$user['status']}})">
                                                 @if(isset($user['user_details']) && isset($user['user_details']['status']))
                                                     {{$user['user_details']['status']}}
                                                 @endif
@@ -334,10 +334,15 @@
                                                 <i class="fas fa-pencil-alt"></i>
                                                 Edit
                                             </a>
-                                            <a class="btn btn-danger btn-sm" href="/admin/users/{{$user->id}}">
+                                            <a class="btn btn-danger btn-sm" href="#" onclick="event.preventDefault(); document.getElementById('delete-form-{{$user['id']}}').submit();">
                                                 <i class="fas fa-trash"></i>
                                                 Delete
                                             </a>
+
+                                            <form id="delete-form-{{$user['id']}}" action="/admin/users/{{$user['id']}}" method="POST" style="display: none;">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -376,5 +381,26 @@
     <script src="../../dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="../../dist/js/demo.js"></script>
+    <script>
+        function ChangeStatus( user_id) {
+            var xhr=new XMLHttpRequest();
+            var url='/api/updateStatus';
+            xhr.open("POST",url,true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            console.log('da den day');
+
+            xhr.onreadystatechange=function () {
+                if(xhr.readyState===4 && xhr.status===200){
+                    document.getElementById("statusBadge").style.backgroundColor = "red";
+                    document.getElementById("statusButton").style.backgroundColor = "red";
+                    document.getElementById("statusButton").innerText = "inactive";
+                }
+            }
+            // Dữ liệu bạn muốn gửi đi
+            var data = JSON.stringify({"userId": user_id});
+            xhr.send(data);
+
+        }
+    </script>
 </body>
 </html>

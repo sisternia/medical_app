@@ -1,14 +1,10 @@
-@php
-$email = $user->email;
-$name = $user->name;
-$bio = isset($user_details) && $user_details != null ? $user_details->bio_data : null;
-@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | General Form Elements</title>
+    <title>User Management</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -18,6 +14,7 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
     <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
+<!-- Site wrapper -->
 <div class="wrapper">
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -193,12 +190,12 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class
-                         with font-awesome or any other icon font library -->
+                        with font-awesome or any other icon font library -->
                     <li class="nav-item menu-open">
 
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="./index.html" class="nav-link active">
+                                <a href="/admin" class="nav-link active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Dashboard</p>
                                 </a>
@@ -217,7 +214,7 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/admin/users" class="nav-link">
+                        <a href="/admin/doctors" class="nav-link">
                             <i class="nav-icon fas fa-th"></i>
                             <p>
                                 Quản Lý bác sĩ
@@ -239,12 +236,12 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>General Form</h1>
+                        <h1>Doctor Management</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">General Form</li>
+                            <li class="breadcrumb-item active">Projects</li>
                         </ol>
                     </div>
                 </div>
@@ -253,65 +250,116 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
 
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <!-- left column -->
-                    <div class="col-md-6">
-                        <!-- general form elements -->
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">Edit User Info</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <!-- form start -->
-                            <form action="/admin/users/{{$user->id}}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Email address</label>
-                                        <input type="email" class="form-control" id="email" placeholder="" name="email" value="{{$email}}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Name</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder=""value="{{$name}}" >
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Bio</label>
-                                        <input type="text" class="form-control" id="bio" name="bio" value="{{$bio}}">
-                                    </div>
 
+            <!-- Default box -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Appointment List</h3>
 
-
-                                </div>
-                                <!-- /.card-body -->
-
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
-                        </div>
-                        <!-- /.card -->
-                        <!-- general form elements -->
-                        <!-- /.card -->
-                        <!-- Input addon -->
-                        <!-- /.card -->
-                        <!-- Horizontal Form -->
-                        <!-- /.card -->
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <!--/.col (left) -->
-                    <!-- right column -->
-                    <div class="col-md-6">
-                        <!-- Form Element sizes -->
-                    </div>
-                    <!--/.col (right) -->
                 </div>
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
+                <div class="card-body p-0">
+                    <table class="table table-striped projects">
+                        <thead>
+                        <tr>
+                            <th style="width: 1%">
+                                #
+                            </th>
+                            <th style="width: 20%">
+                                Tên người dùng
+                            </th>
+                            <th style="width: 30%">
+                                Tên bác sĩ
+                            </th>
+                            <th>
+                               Ngày
+                            </th>
+
+                            <th style="width: 8%" class="text-center">
+                                Status
+                            </th>
+                            <th style="width: 20%">
+                            </th>
+                        </tr>
+                        </thead>
+                        @php
+                        $count = 0;
+                        @endphp
+                        <tbody>
+                        @if(!is_null($listUser))
+                        @foreach($listUser as $user)
+                        @php ++$count; @endphp
+                        <tr>
+                            <td>
+                                {{$count}}
+                            </td>
+                            <td>
+                                <a>
+                                    {{$user['name']}}
+                                </a>
+                                <br/>
+                            </td>
+                            <td>
+                                <a>
+                                    {{$user['email']}}
+                                </a>
+                            </td>
+                            <td class="project_progress">
+                                <a>
+                                    @if(isset($user['doctor']) && isset($user['doctor']['bio_data']) && $user['doctor']['bio_data'] != null)
+                                    {{$user['doctor']['bio_data']}}
+                                    @endif
+                                </a>
+                            </td>
+                            <td class="project_progress">
+                                <a>
+                                    @if(isset($user['doctor']) && isset($user['doctor']['experience']) && $user['doctor']['experience'] != null)
+                                    {{$user['doctor']['experience']}}
+                                    @endif
+                                </a>
+                            </td>
+                            <td class="project-state">
+                                            <span id="statusButton" class="badge badge-success" onclick="ChangeStatus()">
+                                                @if(isset($user['user_details']) && isset($user['user_details']['status']))
+                                                    {{$user['user_details']['status']}}
+                                                @endif
+                                            </span>
+                            </td>
+                            <td class="project-actions text-right">
+                                <a class="btn btn-primary btn-sm" href="#">
+                                    <i class="fas fa-folder"></i>
+                                    View
+                                </a>
+                                <a class="btn btn-info btn-sm" href="/admin/doctors/{{$user['id']}}">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    Edit
+                                </a>
+                                <a class="btn btn-danger btn-sm" href="/admin/doctors/{{$user->id}}">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                        @endforeach
+                        @endif
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
         </section>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
     <footer class="main-footer">
         <div class="float-right d-none d-sm-block">
             <b>Version</b> 3.2.0
@@ -331,17 +379,30 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
 <script src="../../plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- bs-custom-file-input -->
-<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../../dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../../dist/js/demo.js"></script>
-<!-- Page specific script -->
 <script>
-    $(function () {
-        bsCustomFileInput.init();
-    });
+    function sendRequest( user_id) {
+        var xhr=new XMLHttpRequest();
+        var url='/api/updateStatus';
+        xhr.open("POST",url,true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        console.log('da den day');
+
+        xhr.onreadystatechange=function () {
+            if(xhr.readyState===4 && xhr.status===200){
+                document.getElementById("statusBadge").style.backgroundColor = "red";
+                document.getElementById("statusButton").style.backgroundColor = "red";
+                document.getElementById("statusButton").innerText = "inactive";
+            }
+        }
+        // Dữ liệu bạn muốn gửi đi
+        var data = JSON.stringify({"userId": user_id});
+        xhr.send(data);
+
+    }
 </script>
 </body>
 </html>

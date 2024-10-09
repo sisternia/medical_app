@@ -48,6 +48,42 @@ class UsersController extends Controller
         return $user;
     }
 
+    
+    public function getUserBio(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->type === 'doctor') {
+            $bio = Doctor::where('doc_id', $user->id)->value('bio_data');
+        } else {
+            $bio = UserDetails::where('user_id', $user->id)->value('bio_data');
+        }
+
+        return response()->json(['bio_data' => $bio]);
+    }
+
+    public function updateUserBio(Request $request)
+    {
+        $user = $request->user();
+        $bioData = $request->input('bio_data');
+
+        if ($user->type === 'doctor') {
+            $doctor = Doctor::where('doc_id', $user->id)->first();
+            if ($doctor) {
+                $doctor->bio_data = $bioData;
+                $doctor->save();
+            }
+        } else {
+            $userDetail = UserDetails::where('user_id', $user->id)->first();
+            if ($userDetail) {
+                $userDetail->bio_data = $bioData;
+                $userDetail->save();
+            }
+        }
+
+        return response()->json(['status' => 'success']);
+    }
+
     public function updateProfilePhoto(Request $request)
     {
         $request->validate([
@@ -161,41 +197,6 @@ class UsersController extends Controller
         return $user;
     }
 
-    public function getUserBio(Request $request)
-    {
-        $user = $request->user();
-
-        if ($user->type === 'doctor') {
-            $bio = Doctor::where('doc_id', $user->id)->value('bio_data');
-        } else {
-            $bio = UserDetails::where('user_id', $user->id)->value('bio_data');
-        }
-
-        return response()->json(['bio_data' => $bio]);
-    }
-
-    public function updateUserBio(Request $request)
-    {
-        $user = $request->user();
-        $bioData = $request->input('bio_data');
-
-        if ($user->type === 'doctor') {
-            $doctor = Doctor::where('doc_id', $user->id)->first();
-            if ($doctor) {
-                $doctor->bio_data = $bioData;
-                $doctor->save();
-            }
-        } else {
-            $userDetail = UserDetails::where('user_id', $user->id)->first();
-            if ($userDetail) {
-                $userDetail->bio_data = $bioData;
-                $userDetail->save();
-            }
-        }
-
-        return response()->json(['status' => 'success']);
-    }
-
     /**
     * Logout.
     */
@@ -269,31 +270,32 @@ class UsersController extends Controller
 
         return view('userList',compact('listUser'));
     }
+    public function adminDashboard()
+    {
+        $users = array(); //this will return a set of user and doctor data
+        $soluongbacsi = User::all()->where('type', 'doctor')->count();
+        $soluongbenhnhan = User::all()->where('type', 'user')->count();
+        $soluongcuochen=Appointments::all()->count();
+        return view('admin',compact(['soluongbacsi','soluongbenhnhan','soluongcuochen']));
+    }
     public function doctorManagement()
     {
         $users = array(); //this will return a set of user and doctor data
         $listUser = User::with('doctor')->where('type', 'doctor')->get();
-
-
-
-        return view('userList',compact('listUser'));
+        return view('doctorList',compact('listUser'));
     }
 
 
     public function changeUserInfor(Request $request,$id)
     {
         $user = User::find($id);
-
-
-
-
         $user->name = $request->input('name') ;
         $user->email = $request->input('email');
-    //  $user->user_details->bio_data=$request->input('bio');
+      $user->user_details->bio_data=$request->input('bio');
 
 
         $user->save();
-        // $user->user_details->save();
+         $user->user_details->save();
         $listUser = User::with('user_details')->where('type', 'user')->get();
         return view('userList',compact('listUser'));
 
@@ -311,7 +313,7 @@ class UsersController extends Controller
 
         return view('editUser',compact(['user','user_details']));
 
-        return response()->json(['status' => 'success', 'user' => $user,'user_details'=>$user_details], 200);
+
     }
 
     public function adminDeleteUser(Request $request,$id)
@@ -323,10 +325,59 @@ class UsersController extends Controller
 
 
 
-        
 
-        $listUser = User::with('user_details')->where('type', 'user')->get();
-        return view('userList',compact('listUser'));    
+
+        $listUser = User::with('doctor')->where('type', 'doctor')->get();
+        return view('userList',compact('listUser'));
+    }
+    public function adminDeleteDoctor(Request $request,$id)
+    {
+        $doctor=Doctor::find($id);
+        dd($doctor->doc_id);
+        $user=User::find($doctor->doc_id);
+        $user->delete();
+
+
+
+
+
+
+
+        $listUser = User::with('doctor')->where('type', 'doctor')->get();
+        return view('doctorList',compact('listUser'));
+    }
+
+
+
+
+    public function changeDoctorInfor(Request $request,$id)
+    {
+        $user = User::find($id);
+        $user->name = $request->input('name') ;
+        $user->email = $request->input('email');
+
+        $doctor=$user->doctor;
+
+        if($request->input('experience')!=null){
+        $doctor->experience = $request->input('experience') ;
+    }
+
+        if( $request->input('bio')!=null){
+            $doctor->bio_data = $request->input('bio') ;
+        }
+
+
+
+
+
+
+
+
+        $user->save();
+        $user->doctor->save();
+        $listUser = User::with('doctor')->where('type', 'doctor')->get();
+        return view('doctorList',compact('listUser'));
+
     }
 
 }

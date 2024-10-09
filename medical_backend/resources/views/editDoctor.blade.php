@@ -1,7 +1,10 @@
 @php
 $email = $user->email;
 $name = $user->name;
-$bio = isset($user_details) && $user_details != null ? $user_details->bio_data : null;
+$bio = isset($doctor) && $doctor != null ? $doctor->bio_data : null;
+$category = isset($doctor) && $doctor != null ? $doctor->category : null;
+
+$experience=isset($doctor) && $doctor != null ? $doctor->bio_data : null;
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -264,7 +267,7 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form action="/admin/users/{{$user->id}}" method="POST">
+                            <form action="/admin/doctors/{{$user->id}}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="card-body">
@@ -280,7 +283,10 @@ $bio = isset($user_details) && $user_details != null ? $user_details->bio_data :
                                         <label for="exampleInputEmail1">Bio</label>
                                         <input type="text" class="form-control" id="bio" name="bio" value="{{$bio}}">
                                     </div>
-
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Experience</label>
+                                        <input type="text" class="form-control" id="experience" name="experience" value="{{$experience}}">
+                                    </div>
 
 
                                 </div>

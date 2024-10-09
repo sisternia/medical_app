@@ -98,4 +98,19 @@ class DocsController extends Controller
     {
         //
     }
+    public function returnViewDoctorEdit(Request $request,$id)
+    {
+        $user = User::find($id);
+        $doctor=$user->doctor;
+
+
+
+
+
+
+
+        return view('editDoctor',compact(['user','doctor']));
+
+//        return response()->json(['status' => 'success', 'user' => $user,'user_details'=>$user_details], 200);
+    }
 }
